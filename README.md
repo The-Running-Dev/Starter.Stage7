@@ -1,12 +1,14 @@
-## Stage 6 - Azure Functions
+## Stage 7 - Azure DevOps and ARM templates
+
 ### Learning
-- Azure Functions: https://docs.microsoft.com/en-us/azure/azure-functions/
-- Create Serverless Functions: https://app.pluralsight.com/library/courses/microsoft-azure-serverless-functions-create/table-of-contents
-- DI in .Net Core: https://andrewlock.net/using-dependency-injection-in-a-net-core-console-application/
-- DI in Aps.Net Core https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-2.1
-- DI in Functions: https://docs.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection
-- Service Bus Bindings : https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-service-bus
- 
+- Build and Deploy: https://azure.microsoft.com/en-us/services/devops/?nav=min
+- ARM Templates: https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-quickstart-create-templates-use-the-portal
+- ARM Templates: http://techgenix.com/visual-studio-team-services-arm-templates/
+- The section titled "Building, Deploying, and DevOps with VSTS" is really helpfull: https://app.pluralsight.com/library/courses/getting-started-visual-studio-team-services-2018/table-of-contents
+
 ### Tasks
-- Framework: Convert your application from .NET framework to be .NET core. This means that some packages (such as Unity) are no longer needed as they are a part of the framework.
-- Processors: Convert your processors (not the UI processor) into Azure functions. These functions should be deployed from Visual Studio, not directly in the portal
+- Repo: Create a source code repository in VSTS/Devops to hold your code. 
+- Build: Create a build which also runs your unit tests
+- Release: Create a SEPARATE release pipeline which deploys the artifacts created from the build to your resource group.
+- ARM Templates: Download the ARM template for your resource group. Understand how the combination of values tells azure how to create your resource group.
+- Deploy ARM Templates: Use VSTS to deploy your resource group as an ARM template.
