@@ -14,15 +14,15 @@ variables:
 
 steps:
 - task: NuGetToolInstaller@1
-  display: 'Installing NuGet...'
+  displayName: 'Installing NuGet...'
 
 - task: NuGetCommand@2
-  display: 'Restoring Packages...'
+  displayName: 'Restoring Packages...'
   inputs:
     restoreSolution: '$(solution)'
 
 - task: VSBuild@1
-  display: 'Building Project...'
+  displayName: 'Building Project...'
   inputs:
     solution: '$(solution)'
     msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
@@ -30,7 +30,7 @@ steps:
     configuration: '$(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
-  display: 'Running Tests...'
+  displayName: 'Running Tests...'
   inputs:
     command: test
     projects: '**/*Tests/*.csproj'
