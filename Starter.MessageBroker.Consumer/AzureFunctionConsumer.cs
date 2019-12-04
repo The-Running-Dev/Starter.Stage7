@@ -10,6 +10,7 @@ namespace Starter.MessageBroker.Consumer.Azure
     /// <summary>
     /// Implements The message broker consumer as Azure function
     /// </summary>
+    [ServiceBusAccount("ServiceBusConnectionString")]
     public class AzureFunctionConsumer
     {
         private readonly IMessageBrokerConsumer _messageBrokerConsumer;
@@ -24,10 +25,10 @@ namespace Starter.MessageBroker.Consumer.Azure
 
         [FunctionName("MessageBrokerConsumer")]
         public void Run(
-            [ServiceBusTrigger("%QueueName%", Connection = "AzureWebJobsServiceBus")]string message)
+            [ServiceBusTrigger("%ServiceBusQueue%")]string message)
         {
             Console.WriteLine($"Message: {message}");
-            
+
             _logger.LogInformation($"Message: {message}");
 
             _messageBrokerConsumer.Consume(message);
