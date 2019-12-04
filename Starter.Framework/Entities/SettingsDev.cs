@@ -5,7 +5,7 @@
     /// </summary>
     public class SettingsDev : Settings
     {
-        public override string TableStorageConnectionString =>
+        public override string StorageAccountConnection =>
             "UseDevelopmentStorage=true";
     }
 }

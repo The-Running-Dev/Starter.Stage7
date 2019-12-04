@@ -10,7 +10,7 @@ namespace Starter.MessageBroker.Consumer.Azure
     /// <summary>
     /// Implements The message broker consumer as Azure function
     /// </summary>
-    [ServiceBusAccount("ServiceBusConnectionString")]
+    [ServiceBusAccount("ServiceBusConnection")]
     public class AzureFunctionConsumer
     {
         private readonly IMessageBrokerConsumer _messageBrokerConsumer;

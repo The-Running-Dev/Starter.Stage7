@@ -22,7 +22,7 @@ namespace Starter.MessageBroker.Azure
 
         public AzureMessageBroker(ISettings settings)
         {
-            _queueClient = new QueueClient(settings.ServiceBusConnectionString, settings.ServiceBusQueue);
+            _queueClient = new QueueClient(settings.ServiceBusConnection, settings.ServiceBusQueue);
         }
 
         public async Task Send(Message<T> entity)

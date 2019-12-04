@@ -11,11 +11,11 @@
 
         string CatEntityTableName { get; }
 
-        string TableStorageConnectionString { get; }
+        string StorageAccountConnection { get; }
         
         string ResourceUrl { get; }
         
-        string ServiceBusConnectionString { get; }
+        string ServiceBusConnection { get; }
 
         string ServiceBusQueue { get; }
     }

@@ -5,8 +5,9 @@
     /// </summary>
     public class SettingsTest : SettingsDev
     {
-        public override string ApiUrl => "http://localhost:55340/";
-
         public override string CatEntityTableName => "CatsTests";
+
+        public override string StorageAccountConnection =>
+            "DefaultEndpointsProtocol=https;AccountName=devastraboyankostadinov;AccountKey=Tt+oWyP1oBSYOgFGLqonhOVEtAVp+q2GaCMe32IZR0AY9fL87PjofMnILJpyUMRJM8+LTgyM/FQ82LyUahWd1Q==;EndpointSuffix=core.windows.net";
     }
 }

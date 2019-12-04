@@ -18,22 +18,15 @@ namespace Starter.Repository.Repositories
 
         public Repository(ISettings settings, string tableName)
         {
-            _storageAccount = CloudStorageAccount.Parse(settings.TableStorageConnectionString);
+            _storageAccount = CloudStorageAccount.Parse(settings.StorageAccountConnection);
 
             var tableClient = _storageAccount.CreateCloudTableClient(new TableClientConfiguration());
             _table = tableClient.GetTableReference(tableName);
 
-            _table.CreateIfNotExistsAsync();
-        }
-
-        private async Task<CloudTable> CreateTable(string tableName)
-        {
-            var tableClient = _storageAccount.CreateCloudTableClient(new TableClientConfiguration());
-            var table = tableClient.GetTableReference(tableName);
-
-            await table.CreateIfNotExistsAsync();
-
-            return table;
+            Task.Run(async () =>
+            {
+                await _table.CreateIfNotExistsAsync();
+            });
         }
 
         public async Task<IEnumerable<T>> ExecuteQuery<T>(TableQuery<T> query = null) where T : ITableEntity, new()
