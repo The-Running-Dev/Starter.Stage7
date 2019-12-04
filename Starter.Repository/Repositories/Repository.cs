@@ -22,11 +22,7 @@ namespace Starter.Repository.Repositories
 
             var tableClient = _storageAccount.CreateCloudTableClient(new TableClientConfiguration());
             _table = tableClient.GetTableReference(tableName);
-
-            Task.Run(async () =>
-            {
-                await _table.CreateIfNotExistsAsync();
-            });
+            _table.CreateIfNotExists();
         }
 
         public async Task<IEnumerable<T>> ExecuteQuery<T>(TableQuery<T> query = null) where T : ITableEntity, new()

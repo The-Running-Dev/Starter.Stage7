@@ -14,12 +14,6 @@ namespace Starter.Repository.Tests.Repositories
     /// </summary>
     public class CatRepositoryTests : TestsBase
     {
-        [SetUp]
-        public void Setup()
-        {
-            CreateTestData();
-        }
-
         [Test]
         [Category("Integration")]
         public async Task GetAll_Cats_Successful()

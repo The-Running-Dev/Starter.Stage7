@@ -35,15 +35,8 @@ namespace Starter.Repository.Tests
 
             var tableClient = StorageAccount.CreateCloudTableClient(new TableClientConfiguration());
             CatsTable = tableClient.GetTableReference(settings.CatEntityTableName);
-        }
 
-        /// <summary>
-        /// Cleans up created records
-        /// </summary>
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            CatsTable.DeleteIfExists();
+            CreateTestData();
         }
 
         /// <summary>
