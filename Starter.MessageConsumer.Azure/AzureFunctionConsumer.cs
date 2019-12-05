@@ -1,11 +1,9 @@
 using System;
-
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
-
 using Starter.Data.Consumers;
 
-namespace Starter.MessageBroker.Consumer.Azure
+namespace Starter.MessageConsumer.Azure
 {
     /// <summary>
     /// Implements The message broker consumer as Azure function
