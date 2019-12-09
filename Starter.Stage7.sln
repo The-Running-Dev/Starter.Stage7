@@ -39,6 +39,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.MessageConsumer.Azu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.MessageConsumer.Console", "Starter.MessageConsumer.Console\Starter.MessageConsumer.Console.csproj", "{43DF99E4-E071-4068-9D2D-E19D5A4CEE99}"
 EndProject
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "Starter.Resources.Azure", "Starter.Resources.Azure\Starter.Resources.Azure.deployproj", "{52EBCBAA-E3CA-44A4-82E6-392457621D88}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,10 @@ Global
 		{43DF99E4-E071-4068-9D2D-E19D5A4CEE99}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43DF99E4-E071-4068-9D2D-E19D5A4CEE99}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43DF99E4-E071-4068-9D2D-E19D5A4CEE99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52EBCBAA-E3CA-44A4-82E6-392457621D88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52EBCBAA-E3CA-44A4-82E6-392457621D88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52EBCBAA-E3CA-44A4-82E6-392457621D88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52EBCBAA-E3CA-44A4-82E6-392457621D88}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
