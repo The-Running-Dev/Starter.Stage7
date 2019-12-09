@@ -5,13 +5,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Starter.Data.Services;
 using Starter.Data.Consumers;
+using Starter.Data.Entities;
 using Starter.Data.ViewModels;
 using Starter.Data.Repositories;
 
 using Starter.Framework.Clients;
 using Starter.Framework.Entities;
 using Starter.Framework.Loggers;
-
+using Starter.MessageBroker.Azure;
 using Starter.Repository.Repositories;
 
 namespace Starter.Bootstrapper
@@ -70,10 +71,12 @@ namespace Starter.Bootstrapper
             services.AddTransient<ILogger, ApplicationInsightsLogger>();
 
             services.AddTransient<ICatRepository, CatRepository>();
-            //container.AddTransient<IMessageBroker<Cat>, AzureMessageBroker<Cat>>();
-            services.AddTransient<IMessageConsumer, MessageConsumer>();
+            services.AddTransient<IMessageBroker<Cat>, AzureMessageBroker<Cat>>();
+            services.AddTransient<IMessageConsumer<Cat>, MessageConsumer<Cat>>();
+            services.AddTransient<IMessageConsumerService, MessageConsumerService>();
             services.AddTransient<ICatService, CatService>();
             services.AddTransient<IMainViewModel, MainViewModel>();
+            services.AddHostedService<MessageConsumerService>();
 
             var serviceProvider = services.BuildServiceProvider();
 

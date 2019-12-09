@@ -59,7 +59,7 @@ namespace Starter.MessageBroker.Azure
             }, messageHandlerOptions);
         }
 
-        public void Stop()
+        public void Dispose()
         {
             _queueClient.CloseAsync();
         }

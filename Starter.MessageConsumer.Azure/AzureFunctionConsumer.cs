@@ -4,22 +4,24 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 
 using Starter.Data.Consumers;
+using Starter.Data.Entities;
+using Starter.Framework.Extensions;
 
 namespace Starter.MessageConsumer.Azure
 {
     /// <summary>
-    /// Implements The message broker consumer as Azure function
+    /// Implements The message consumer as Azure function
     /// </summary>
     [ServiceBusAccount("ServiceBusConnection")]
     public class AzureFunctionConsumer
     {
-        private readonly IMessageConsumer _messageConsumer;
+        private readonly IMessageConsumer<Cat> _consumer;
 
-        private readonly ILogger<Data.Consumers.MessageConsumer> _logger;
+        private readonly ILogger<IMessageConsumer<Cat>> _logger;
 
-        public AzureFunctionConsumer(IMessageConsumer messageConsumer, ILogger<Data.Consumers.MessageConsumer> logger)
+        public AzureFunctionConsumer(IMessageConsumer<Cat> consumer, ILogger<IMessageConsumer<Cat>> logger)
         {
-            _messageConsumer = messageConsumer;
+            _consumer = consumer;
             _logger = logger;
         }
 
@@ -31,7 +33,7 @@ namespace Starter.MessageConsumer.Azure
 
             _logger.LogInformation($"Message: {message}");
 
-            _messageConsumer.Consume(message);
+            _consumer.Consume(message.FromJson<Message<Cat>>());
         }
     }
 }

@@ -14,11 +14,11 @@ namespace Starter.Data.Services
     {
         private readonly IApiClient _apiClient;
 
-        private IMessageBroker<Cat> _messageBroker;
+        private IMessageBroker<Cat> _broker;
 
-        public CatService(IMessageBroker<Cat> messageBroker, IApiClient apiClient)
+        public CatService(IMessageBroker<Cat> broker, IApiClient apiClient)
         {
-            _messageBroker = messageBroker;
+            _broker = broker;
             _apiClient = apiClient;
         }
 
@@ -36,27 +36,27 @@ namespace Starter.Data.Services
         {
             var message = new Message<Cat>(MessageCommand.Create, entity);
 
-            await _messageBroker.Send(message);
+            await _broker.Send(message);
         }
 
         public async Task Update(Cat entity)
         {
             var message = new Message<Cat>(MessageCommand.Update, entity);
 
-            await _messageBroker.Send(message);
+            await _broker.Send(message);
         }
 
         public async Task Delete(Guid id)
         {
             var message = new Message<Cat>(MessageCommand.Delete, new Cat { Id = id });
 
-            await _messageBroker.Send(message);
+            await _broker.Send(message);
         }
 
         public void Dispose()
         {
-            _messageBroker.Stop();
-            _messageBroker = null;
+            _broker.Dispose();
+            _broker = null;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+
 using Starter.Bootstrapper;
 using Starter.MessageConsumer.Azure;
 

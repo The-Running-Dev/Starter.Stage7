@@ -1,18 +1,13 @@
-﻿using Starter.Data.Entities;
+﻿using System;
+using Starter.Data.Entities;
 
 namespace Starter.Data.Consumers
 {
     /// <summary>
-    /// Defines the contract for the message broker consumer
+    /// Defines the contract for the message consumer
     /// </summary>
-    public interface IMessageConsumer
+    public interface IMessageConsumer<T>: IDisposable where T: IEntity
     {
-        void OnDataReceived(object sender, Message<Cat> message);
-
-        void Consume(string message);
-
-        bool Start();
-
-        bool Stop();
+        void Consume(Message<T> message);
     }
 }

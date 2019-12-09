@@ -3,78 +3,55 @@
 using Microsoft.Extensions.Logging;
 
 using Starter.Data.Entities;
-using Starter.Data.Services;
 using Starter.Framework.Clients;
-using Starter.Framework.Extensions;
 
 namespace Starter.Data.Consumers
 {
     /// <summary>
     /// Implements the message consumer
     /// </summary>
-    public class MessageConsumer : IMessageConsumer
+    public class MessageConsumer<T> : IMessageConsumer<T> where T: IEntity
     {
-        private readonly IApiClient _apiClient;
+        private IApiClient _apiClient;
 
-        private readonly IMessageBroker<Cat> _messageBroker;
+        private readonly ILogger<IMessageConsumer<T>> _logger;
 
-        private readonly ILogger _logger;
-
-        public MessageConsumer(IMessageBroker<Cat> messageBroker, IApiClient apiClient, ILogger logger)
+        public MessageConsumer(IApiClient apiClient, ILogger<IMessageConsumer<T>> logger)
         {
-            _messageBroker = messageBroker;
             _apiClient = apiClient;
             _logger = logger;
-
-            _messageBroker.DataReceived += OnDataReceived;
-        }
-
-        public void OnDataReceived(object sender, Message<Cat> message)
-        {
-
-        }
-
-        public bool Start()
-        {
-            _messageBroker.Receive();
-
-            return true;
-        }
-
-        public bool Stop()
-        {
-            _messageBroker.Stop();
-
-            return true;
         }
 
         /// <summary>
         /// Consumes the message from the message broker
         /// </summary>
         /// <param name="message"></param>
-        public void Consume(string message)
+        public void Consume(Message<T> message)
         {
-            var m = message.FromJson<Message<Cat>>();
+            _logger.Log(LogLevel.Information, $"{message.Command}, {message.Type}, {message}");
 
-            _logger.Log(LogLevel.Information, $"{m.Command}, {m.Type}, {message}");
-
-            switch (m.Command)
+            switch (message.Command)
             {
                 case MessageCommand.Create:
-                    _apiClient.Create(m.Entity);
+                    _apiClient.Create(message.Entity);
 
                     break;
                 case MessageCommand.Update:
-                    _apiClient.Update(m.Entity);
+                    _apiClient.Update(message.Entity);
 
                     break;
                 case MessageCommand.Delete:
-                    _apiClient.Delete(m.Entity.Id);
+                    _apiClient.Delete(message.Entity.Id);
 
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        public void Dispose()
+        {
+            _apiClient = null;
         }
     }
 }

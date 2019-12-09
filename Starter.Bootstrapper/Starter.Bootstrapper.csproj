@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Starter.Data\Starter.Data.csproj" />
     <ProjectReference Include="..\Starter.Framework\Starter.Framework.csproj" />
+    <ProjectReference Include="..\Starter.MessageBroker.Azure\Starter.MessageBroker.Azure.csproj" />
     <ProjectReference Include="..\Starter.Repository\Starter.Repository.csproj" />
   </ItemGroup>
 </Project>
