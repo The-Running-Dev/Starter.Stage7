@@ -1,14 +1,15 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-alpine AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2-alpine AS build
 WORKDIR /src
 COPY ["Starter.API/Starter.API.csproj", "Starter.API/"]
+COPY ["Starter.Bootstrapper/Starter.Bootstrapper.csproj", "Starter.Bootstrapper/"]
 COPY ["Starter.Data/Starter.Data.csproj", "Starter.Data/"]
 COPY ["Starter.Framework/Starter.Framework.csproj", "Starter.Framework/"]
-COPY ["Starter.Bootstrapper/Starter.Bootstrapper.csproj", "Starter.Bootstrapper/"]
+COPY ["Starter.MessageBroker.Azure/Starter.MessageBroker.Azure.csproj", "Starter.MessageBroker.Azure/"]
 COPY ["Starter.Repository/Starter.Repository.csproj", "Starter.Repository/"]
 RUN dotnet restore "Starter.API/Starter.API.csproj"
 COPY . .
