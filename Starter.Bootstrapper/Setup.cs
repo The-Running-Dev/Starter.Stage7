@@ -71,7 +71,7 @@ namespace Starter.Bootstrapper
 
             services.AddTransient<ICatRepository, CatRepository>();
             //container.AddTransient<IMessageBroker<Cat>, AzureMessageBroker<Cat>>();
-            services.AddTransient<IMessageBrokerConsumer, MessageBrokerConsumer>();
+            services.AddTransient<IMessageConsumer, MessageConsumer>();
             services.AddTransient<ICatService, CatService>();
             services.AddTransient<IMainViewModel, MainViewModel>();
 

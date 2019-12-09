@@ -1,6 +1,8 @@
 using System;
+
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
+
 using Starter.Data.Consumers;
 
 namespace Starter.MessageConsumer.Azure
@@ -11,17 +13,17 @@ namespace Starter.MessageConsumer.Azure
     [ServiceBusAccount("ServiceBusConnection")]
     public class AzureFunctionConsumer
     {
-        private readonly IMessageBrokerConsumer _messageBrokerConsumer;
+        private readonly IMessageConsumer _messageConsumer;
 
-        private readonly ILogger<MessageBrokerConsumer> _logger;
+        private readonly ILogger<Data.Consumers.MessageConsumer> _logger;
 
-        public AzureFunctionConsumer(IMessageBrokerConsumer messageBrokerConsumer, ILogger<MessageBrokerConsumer> logger)
+        public AzureFunctionConsumer(IMessageConsumer messageConsumer, ILogger<Data.Consumers.MessageConsumer> logger)
         {
-            _messageBrokerConsumer = messageBrokerConsumer;
+            _messageConsumer = messageConsumer;
             _logger = logger;
         }
 
-        [FunctionName("MessageBrokerConsumer")]
+        [FunctionName("MessageConsumer")]
         public void Run(
             [ServiceBusTrigger("%ServiceBusQueue%")]string message)
         {
@@ -29,7 +31,7 @@ namespace Starter.MessageConsumer.Azure
 
             _logger.LogInformation($"Message: {message}");
 
-            _messageBrokerConsumer.Consume(message);
+            _messageConsumer.Consume(message);
         }
     }
 }
