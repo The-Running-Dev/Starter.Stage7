@@ -58,6 +58,10 @@ steps:
     publishWebProjects: false
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(messageConsumerProject)'
 
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+
 - task: Docker@2
   displayName: 'Building the API Docker Image...'
   inputs:
