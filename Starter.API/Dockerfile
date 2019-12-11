@@ -5,7 +5,7 @@ WORKDIR /
 EXPOSE 80
 EXPOSE 443
 
-COPY Artificats/Starter.API/ .
+COPY ${API_ARTIFACTS}/ .
 RUN rm *.pdb
 
 ENTRYPOINT ["dotnet", "Starter.API.dll"]

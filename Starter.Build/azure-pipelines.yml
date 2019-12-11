@@ -14,6 +14,10 @@ variables:
   messageConsumerProject: 'Starter.MessageConsumer.Console'
   messageConsumerDockerImage: 'starter.messageConsumer.console'
 
+environment:
+  - API_ARTIFACTS='$(build.artifactstagingdirectory)/$(apiProject)'
+  - MESSAGE_CONSUMER_ARTIFACTS='$(build.artifactstagingdirectory)/$(messageConsumerProject)'
+
 steps:
 - task: UseDotNet@2
   displayName: '.NET 3 is the Bomb!'

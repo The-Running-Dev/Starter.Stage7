@@ -2,7 +2,7 @@
 
 WORKDIR /
 
-COPY Artificats/Starter.MessageConsumer.Console/ .
+COPY ${MESSAGE_CONSUMER_ARTIFACTS}/ .
 RUN rm *.pdb
 
 ENTRYPOINT ["dotnet", "Starter.MessageConsumer.Console.dll"]
