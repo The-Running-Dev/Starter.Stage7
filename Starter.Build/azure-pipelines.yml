@@ -12,19 +12,19 @@ variables:
   apiProject: 'Starter.API'
   apiProjectDockerImage: 'starter.api'
   messageConsumerProject: 'Starter.MessageConsumer.Console'
-  messageConsumerDockerImage: 'starter.messageConsumer.console'
+  messageConsumerDockerImage: 'starter.messageconsumer.console'
   API_ARTIFACTS: '$(build.artifactstagingdirectory)/$(apiProject)'
   MESSAGE_CONSUMER_ARTIFACTS: '$(build.artifactstagingdirectory)/$(messageConsumerProject)'
 
 steps:
 - task: UseDotNet@2
   displayName: '.NET 3 is the Bomb!'
-    inputs:
+  inputs:
     version: '3.0.x'
 
 - task: UseDotNet@2
   displayName: 'But We Still Need the .NET 2.2 Runtime...'
-    inputs:
+  inputs:
     version: '2.2.x'
     packageType: runtime
 
