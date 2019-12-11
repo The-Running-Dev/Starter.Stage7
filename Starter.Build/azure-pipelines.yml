@@ -23,7 +23,7 @@ steps:
     version: '3.0.x'
 
 - task: UseDotNet@2
-  displayName: 'But We Still Need the .NET 2.2 Runtime...'
+  displayName: 'But We Still Need 2.2...'
   inputs:
     version: '2.2.x'
     packageType: runtime
