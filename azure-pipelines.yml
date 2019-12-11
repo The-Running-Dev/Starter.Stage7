@@ -2,39 +2,41 @@ trigger:
 - master
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'ubuntu-latest'
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
+  projects: '**/*.csproj'
   buildConfiguration: 'Release'
+  testProjects: '**/*.Tests/*.csproj'
+  testBuildConfiguration: 'Test'
 
 steps:
-- task: NuGetToolInstaller@1
-  displayName: 'Installing NuGet...'
+- task: UseDotNet@2
+  displayName: '.NET 3 is the Bomb!'
+    inputs:
+    version: '3.0.x'
 
-- task: NuGetCommand@2
-  displayName: 'Restoring Packages...'
-  inputs:
-    restoreSolution: '$(solution)'
-
-- task: VSBuild@1
-  displayName: 'Building Project...'
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+- task: UseDotNet@2
+  displayName: 'But We Still Need the .NET 2.2 Runtime...'
+    inputs:
+    version: '2.2.x'
+    packageType: runtime
 
 - task: DotNetCoreCLI@2
-  displayName: 'Running Tests...'
+  displayName: 'Building All the Codes...'
+  inputs:
+    command: build
+    projects: '$(projects)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Common, Common, Pass All the Tests...'
   inputs:
     command: test
-    projects: '**/*Tests/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
+    projects: '$(testProjects)'
+    arguments: '--configuration $(testBuildConfiguration)'
 
 - task: PublishBuildArtifacts@1
-  displayName: 'Publishing Artifact...'
+  displayName: 'Sending Carrier Pigeons...'
   inputs:
     PathtoPublish: '$(build.artifactstagingdirectory)'
     ArtifactName: '$(Parameters.ArtifactName)'
