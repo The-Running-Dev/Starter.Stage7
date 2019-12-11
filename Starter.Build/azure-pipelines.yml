@@ -13,10 +13,8 @@ variables:
   apiProjectDockerImage: 'starter.api'
   messageConsumerProject: 'Starter.MessageConsumer.Console'
   messageConsumerDockerImage: 'starter.messageConsumer.console'
-
-environment:
-  - API_ARTIFACTS='$(build.artifactstagingdirectory)/$(apiProject)'
-  - MESSAGE_CONSUMER_ARTIFACTS='$(build.artifactstagingdirectory)/$(messageConsumerProject)'
+  API_ARTIFACTS: '$(build.artifactstagingdirectory)/$(apiProject)'
+  MESSAGE_CONSUMER_ARTIFACTS: '$(build.artifactstagingdirectory)/$(messageConsumerProject)'
 
 steps:
 - task: UseDotNet@2
@@ -48,14 +46,14 @@ steps:
   inputs:
     command: publish
     projects: '$(apiProject)/$(apiProject).csproj'
-    arguments: '-o $(build.artifactstagingdirectory)/$(apiProject)'
+    arguments: '-o $(API_ARTIFACTS)'
 
 - task: DotNetCoreCLI@2
   displayName: ''
   inputs:
     command: publish
     projects: '$(messageConsumerProject)/$(messageConsumerProject).csproj'
-    arguments: '-o $(build.artifactstagingdirectory)/$(messageConsumerProject)'    
+    arguments: '-o $(MESSAGE_CONSUMER_ARTIFACTS)'
 
 - task: Docker@2
   displayName: 'Building the API Docker Image...'
