@@ -18,12 +18,6 @@ variables:
 
 steps:
 
-- script: |
-    echo '##vso[task.setvariable variable=API_ARTIFACTS]$(API_ARTIFACTS)'
-    
-    echo '##vso[task.setvariable variable=MESSAGE_CONSUMER_ARTIFACTS]$(MESSAGE_CONSUMER_ARTIFACTS)'
-  displayName: 'Set Environment Variables...'
-
 - task: UseDotNet@2
   displayName: 'We Still Need 2.2...'
   inputs:
@@ -70,6 +64,7 @@ steps:
     repository: '$(apiProjectDockerImage)'
     command: build
     Dockerfile: '$(apiProject)/Dockerfile'
+    arguments: --build-arg ARTIFACTS='$(API_ARTIFACTS)'
 
 - task: Docker@2
   displayName: 'Building Message Consumer Docker Image...'
@@ -77,3 +72,4 @@ steps:
     repository: '$(messageConsumerDockerImage)'
     command: build
     Dockerfile: '$(messageConsumerProject)/Dockerfile'
+    arguments: --build-arg ARTIFACTS='$(MESSAGE_CONSUMER_ARTIFACTS)'

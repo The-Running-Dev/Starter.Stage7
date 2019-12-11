@@ -1,8 +1,10 @@
 ﻿FROM mcr.microsoft.com/dotnet/core/runtime:3.1-alpine AS base
 
+ARG ARTIFACTS
+
 WORKDIR /
 
-COPY ${MESSAGE_CONSUMER_ARTIFACTS}/ .
-RUN rm ${MESSAGE_CONSUMER_ARTIFACTS}/*.pdb
+COPY ${ARTIFACTS}/ .
+RUN rm ${ARTIFACTS}/*.pdb
 
 ENTRYPOINT ["dotnet", "Starter.MessageConsumer.Console.dll"]

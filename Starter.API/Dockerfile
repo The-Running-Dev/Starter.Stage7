@@ -1,11 +1,13 @@
 ﻿FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-alpine AS base
 
+ARG ARTIFACTS
+
 WORKDIR /
 
 EXPOSE 80
 EXPOSE 443
 
-COPY ${API_ARTIFACTS}/ .
-RUN rm ${API_ARTIFACTS}/*.pdb
+COPY ${ARTIFACTS}/ .
+RUN rm ${ARTIFACTS}/*.pdb
 
 ENTRYPOINT ["dotnet", "Starter.API.dll"]
