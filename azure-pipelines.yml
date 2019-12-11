@@ -11,12 +11,19 @@ variables:
   testBuildConfiguration: 'Test'
   apiProject: 'Starter.API'
   apiProjectDockerImage: 'starter.api'
-  API_ARTIFACTS: '$(build.artifactstagingdirectory)/$(apiProject)'
+  API_ARTIFACTS: '$(Build.ArtifactStagingDirectory)/$(apiProject)'
   messageConsumerProject: 'Starter.MessageConsumer.Console'
   messageConsumerDockerImage: 'starter.messageconsumer.console'
-  MESSAGE_CONSUMER_ARTIFACTS: '$(build.artifactstagingdirectory)/$(messageConsumerProject)'
+  MESSAGE_CONSUMER_ARTIFACTS: '$(Build.ArtifactStagingDirectory)/$(messageConsumerProject)'
 
 steps:
+
+- script: |
+    echo '##vso[task.setvariable variable=API_ARTIFACTS]$(API_ARTIFACTS)'
+    
+    echo '##vso[task.setvariable variable=MESSAGE_CONSUMER_ARTIFACTS]$(MESSAGE_CONSUMER_ARTIFACTS)'
+  displayName: 'Set Environment Variables...'
+
 - task: UseDotNet@2
   displayName: 'We Still Need 2.2...'
   inputs:
