@@ -6,6 +6,6 @@ EXPOSE 80
 EXPOSE 443
 
 COPY ${API_ARTIFACTS}/ .
-RUN rm *.pdb
+RUN rm ${API_ARTIFACTS}/*.pdb
 
 ENTRYPOINT ["dotnet", "Starter.API.dll"]
