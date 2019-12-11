@@ -9,16 +9,22 @@ variables:
   buildConfiguration: 'Release'
   testProjects: '**/*.Tests/*.csproj'
   testBuildConfiguration: 'Test'
+  apiProject: 'Starter.API'
+  apiProjectDockerImage: 'starter.api'
+  messageConsumerProject: 'Starter.MessageConsumer.Console'
+  messageConsumerDockerImage: 'starter.messageconsumer.console'
+  API_ARTIFACTS: '$(build.artifactstagingdirectory)/$(apiProject)'
+  MESSAGE_CONSUMER_ARTIFACTS: '$(build.artifactstagingdirectory)/$(messageConsumerProject)'
 
 steps:
 - task: UseDotNet@2
   displayName: '.NET 3 is the Bomb!'
-    inputs:
+  inputs:
     version: '3.0.x'
 
 - task: UseDotNet@2
   displayName: 'But We Still Need the .NET 2.2 Runtime...'
-    inputs:
+  inputs:
     version: '2.2.x'
     packageType: runtime
 
@@ -35,8 +41,30 @@ steps:
     projects: '$(testProjects)'
     arguments: '--configuration $(testBuildConfiguration)'
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Sending Carrier Pigeons...'
+- task: DotNetCoreCLI@2
+  displayName: ''
   inputs:
-    PathtoPublish: '$(build.artifactstagingdirectory)'
-    ArtifactName: '$(Parameters.ArtifactName)'
+    command: publish
+    projects: '$(apiProject)/$(apiProject).csproj'
+    arguments: '-o $(API_ARTIFACTS)'
+
+- task: DotNetCoreCLI@2
+  displayName: ''
+  inputs:
+    command: publish
+    projects: '$(messageConsumerProject)/$(messageConsumerProject).csproj'
+    arguments: '-o $(MESSAGE_CONSUMER_ARTIFACTS)'
+
+- task: Docker@2
+  displayName: 'Building the API Docker Image...'
+  inputs:
+    repository: '$(apiProjectDockerImage)'
+    command: build
+    Dockerfile: '$(apiProject)/Dockerfile'
+
+- task: Docker@2
+  displayName: 'Building Message Consumer Docker Image...'
+  inputs:
+    repository: '$(messageConsumerDockerImage)'
+    command: build
+    Dockerfile: '$(messageConsumerProject)/Dockerfile'
