@@ -29,6 +29,12 @@ steps:
     packageType: runtime
 
 - task: DotNetCoreCLI@2
+  displayName: 'Restoring All the Nugets...'
+  inputs:
+    command: restore
+    projects: '$(projects)'
+
+- task: DotNetCoreCLI@2
   displayName: 'Building All the Codes...'
   inputs:
     command: build
@@ -42,14 +48,14 @@ steps:
     arguments: '--configuration $(testBuildConfiguration)'
 
 - task: DotNetCoreCLI@2
-  displayName: ''
+  displayName: 'Sending the API over Carrier Pigeons'
   inputs:
     command: publish
     projects: '$(apiProject)/$(apiProject).csproj'
     arguments: '-o $(API_ARTIFACTS)'
 
 - task: DotNetCoreCLI@2
-  displayName: ''
+  displayName: 'Sending the Message Consumer over Carrier Pigeons'
   inputs:
     command: publish
     projects: '$(messageConsumerProject)/$(messageConsumerProject).csproj'
