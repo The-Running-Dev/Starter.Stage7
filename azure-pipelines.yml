@@ -64,7 +64,7 @@ steps:
     repository: '$(apiProjectDockerImage)'
     command: build
     Dockerfile: '$(apiProject)/Dockerfile'
-    arguments: --build-arg ARTIFACTS='$(API_ARTIFACTS)'
+    arguments: --build-arg ARTIFACTS='$(Build.ArtifactStagingDirectory)/$(apiProject)'
 
 - task: Docker@2
   displayName: 'Building Message Consumer Docker Image...'
@@ -72,4 +72,4 @@ steps:
     repository: '$(messageConsumerDockerImage)'
     command: build
     Dockerfile: '$(messageConsumerProject)/Dockerfile'
-    arguments: --build-arg ARTIFACTS='$(MESSAGE_CONSUMER_ARTIFACTS)'
+    arguments: --build-arg ARTIFACTS='$(Build.ArtifactStagingDirectory)/$(messageConsumerProject)'
