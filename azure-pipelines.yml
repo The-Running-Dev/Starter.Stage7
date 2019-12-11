@@ -11,9 +11,9 @@ variables:
   testBuildConfiguration: 'Test'
   apiProject: 'Starter.API'
   apiProjectDockerImage: 'starter.api'
+  API_ARTIFACTS: '$(build.artifactstagingdirectory)/$(apiProject)'
   messageConsumerProject: 'Starter.MessageConsumer.Console'
   messageConsumerDockerImage: 'starter.messageconsumer.console'
-  API_ARTIFACTS: '$(build.artifactstagingdirectory)/$(apiProject)'
   MESSAGE_CONSUMER_ARTIFACTS: '$(build.artifactstagingdirectory)/$(messageConsumerProject)'
 
 steps:
@@ -45,15 +45,17 @@ steps:
   displayName: 'Sending the API over Carrier Pigeons'
   inputs:
     command: publish
-    projects: '$(apiProject)/$(apiProject).csproj'
-    arguments: '-o $(API_ARTIFACTS)'
+    projects: '**/$(apiProject)/*.csproj'
+    publishWebProjects: false
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(apiProject)'
 
 - task: DotNetCoreCLI@2
   displayName: 'Sending the Message Consumer over Carrier Pigeons'
   inputs:
     command: publish
-    projects: '$(messageConsumerProject)/$(messageConsumerProject).csproj'
-    arguments: '-o $(MESSAGE_CONSUMER_ARTIFACTS)'
+    projects: '**/$(messageConsumerProject)/*.csproj'
+    publishWebProjects: false
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(messageConsumerProject)'
 
 - task: Docker@2
   displayName: 'Building the API Docker Image...'
