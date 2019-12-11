@@ -1,0 +1,31 @@
+﻿{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"StorageAccount": {
+			"type": "string"
+		},
+		"StorageAccountType": {
+			"type": "string"
+		}
+	},
+	"resources": [
+		{
+			"name": "[parameters('StorageAccount')]",
+			"type": "Microsoft.Storage/storageAccounts",
+			"location": "[resourceGroup().location]",
+			"apiVersion": "2019-04-01",
+			"sku": {
+				"name": "[parameters('StorageAccountType')]",
+				"tier": "Standard"
+			},
+			"dependsOn": [],
+			"tags": {
+				"displayName": "Storage Account"
+			},
+			"kind": "StorageV2"
+		}
+	],
+	"outputs": {
+	}
+}

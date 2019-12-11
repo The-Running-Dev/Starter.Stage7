@@ -1,0 +1,51 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"serviceBus": {
+			"type": "string"
+		},
+		"serviceBusQueue": {
+			"type": "string"
+		}
+	},
+	"variables": {
+		"serviceBusQueue": "[concat(parameters('serviceBus'), concat('/', parameters('serviceBusQueue')))]"
+	},
+	"resources": [
+		{
+			"apiVersion": "2015-08-01",
+			"name": "[parameters('serviceBus')]",
+			"type": "Microsoft.ServiceBus/namespaces",
+			"location": "[resourceGroup().location]",
+			"tags": {
+				"displayName": "Service Bus"
+			}
+		},
+		{
+			"type": "Microsoft.ServiceBus/namespaces/queues",
+			"apiVersion": "2017-04-01",
+			"name": "[variables('serviceBusQueue')]",
+			"location": "[resourceGroup().location]",
+			"dependsOn": [
+				"[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBus'))]"
+			],
+			"properties": {
+				"lockDuration": "PT30S",
+				"maxSizeInMegabytes": 1024,
+				"requiresDuplicateDetection": false,
+				"requiresSession": false,
+				"defaultMessageTimeToLive": "P14D",
+				"deadLetteringOnMessageExpiration": false,
+				"enableBatchedOperations": true,
+				"duplicateDetectionHistoryTimeWindow": "PT10M",
+				"maxDeliveryCount": 10,
+				"status": "Active",
+				"autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+				"enablePartitioning": false,
+				"enableExpress": false
+			}
+		}
+	],
+	"outputs": {}
+}

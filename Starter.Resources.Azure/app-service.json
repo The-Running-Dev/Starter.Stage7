@@ -1,0 +1,144 @@
+﻿{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"AppServicePlan": {
+			"type": "string"
+		},
+		"AppService": {
+			"type": "string"
+		},
+		"AppInsights": {
+			"type": "string"
+		}
+	},
+	"variables": {
+		"AppInsightsAutoScaleSettings": "[concat(parameters('AppInsights'), '-AutoScale')]",
+		"AppInsightsComponents": "[concat(parameters('AppInsights'), '-Components')]"
+	},
+	"resources": [
+		{
+			"name": "[parameters('AppServicePlan')]",
+			"type": "Microsoft.Web/serverfarms",
+			"location": "[resourceGroup().location]",
+			"apiVersion": "2018-02-01",
+			"sku": {
+				"name": "F1",
+				"tier": "Free",
+				"size": "F1",
+				"family": "F",
+				"capacity": 0
+			},
+			"kind": "app",
+			"dependsOn": [],
+			"tags": {
+				"displayName": "App Service Plan"
+			},
+			"properties": {
+				"name": "[parameters('AppServicePlan')]",
+				"numberOfWorkers": 1
+			}
+		},
+		{
+			"name": "[parameters('AppService')]",
+			"type": "Microsoft.Web/sites",
+			"location": "[resourceGroup().location]",
+			"apiVersion": "2018-11-01",
+			"kind": "app",
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/serverfarms', parameters('AppServicePlan'))]"
+			],
+			"tags": {
+				"[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', parameters('AppServicePlan')))]": "Resource",
+				"displayName": "App Service"
+			},
+			"properties": {
+				"name": "[parameters('AppService')]",
+				"serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('AppServicePlan'))]"
+			}
+		},
+		{
+			"name": "[variables('AppInsightsAutoScaleSettings')]",
+			"type": "Microsoft.Insights/autoscalesettings",
+			"location": "[resourceGroup().location]",
+			"apiVersion": "2014-04-01",
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/serverfarms', parameters('AppServicePlan'))]"
+			],
+			"tags": {
+				"[concat('hidden-link:', resourceId('Microsoft.Web/serverfarms', parameters('AppServicePlan')))]": "Resource",
+				"displayName": "AppInsights AutoScale"
+			},
+			"properties": {
+				"name": "[variables('AppInsightsAutoScaleSettings')]",
+				"profiles": [
+					{
+						"name": "Default",
+						"capacity": {
+							"minimum": 1,
+							"maximum": 2,
+							"default": 1
+						},
+						"rules": [
+							{
+								"metricTrigger": {
+									"metricName": "CpuPercentage",
+									"metricResourceUri": "[resourceId('Microsoft.Web/serverfarms', parameters('AppServicePlan'))]",
+									"timeGrain": "PT1M",
+									"statistic": "Average",
+									"timeWindow": "PT10M",
+									"timeAggregation": "Average",
+									"operator": "GreaterThan",
+									"threshold": 80
+								},
+								"scaleAction": {
+									"direction": "Increase",
+									"type": "ChangeCount",
+									"value": 1,
+									"cooldown": "PT10M"
+								}
+							},
+							{
+								"metricTrigger": {
+									"metricName": "CpuPercentage",
+									"metricResourceUri": "[resourceId('Microsoft.Web/serverfarms', parameters('AppServicePlan'))]",
+									"timeGrain": "PT1M",
+									"statistic": "Average",
+									"timeWindow": "PT1H",
+									"timeAggregation": "Average",
+									"operator": "LessThan",
+									"threshold": 60
+								},
+								"scaleAction": {
+									"direction": "Decrease",
+									"type": "ChangeCount",
+									"value": 1,
+									"cooldown": "PT1H"
+								}
+							}
+						]
+					}
+				],
+				"enabled": false,
+				"targetResourceUri": "[resourceId('Microsoft.Web/serverfarms', parameters('AppServicePlan'))]"
+			}
+		},
+		{
+			"type": "microsoft.insights/components",
+			"apiVersion": "2015-05-01",
+			"name": "[variables('AppInsightsComponents')]",
+			"location": "[resourceGroup().location]",
+			"tags": {
+				"displayName": "Application Insights"
+			},
+			"kind": "web",
+			"properties": {
+				"Application_Type": "web",
+				"Flow_Type": "Redfield",
+				"Request_Source": "WebTools16.0"
+			}
+		}
+	],
+	"outputs": {
+	}
+}
