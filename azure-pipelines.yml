@@ -66,7 +66,6 @@ steps:
     command: build
     Dockerfile: '$(apiProject)/Dockerfile'
     arguments: --build-arg ARTIFACTS='$(Build.ArtifactStagingDirectory)/$(apiProject)'
-    buildContext: '$(Build.Repository.LocalPath)'
 
 - task: Docker@2
   displayName: 'Consumer Dockers Everywhere...'
@@ -75,4 +74,3 @@ steps:
     command: build
     Dockerfile: '$(messageConsumerProject)/Dockerfile'
     arguments: --build-arg ARTIFACTS='$(Build.ArtifactStagingDirectory)/$(messageConsumerProject)'
-    buildContext: '$(Build.Repository.LocalPath)'

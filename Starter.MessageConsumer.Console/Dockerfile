@@ -4,6 +4,6 @@ ARG ARTIFACTS
 
 WORKDIR /
 
-COPY $ARTIFACTS/ .
+COPY ["$ARTIFACTS/", "."]
 
 ENTRYPOINT ["dotnet", "Starter.MessageConsumer.Console.dll"]

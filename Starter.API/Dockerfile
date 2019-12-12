@@ -7,6 +7,6 @@ WORKDIR /
 EXPOSE 80
 EXPOSE 443
 
-COPY $ARTIFACTS/ .
+COPY ["$ARTIFACTS/", "."]
 
 ENTRYPOINT ["dotnet", "Starter.API.dll"]
