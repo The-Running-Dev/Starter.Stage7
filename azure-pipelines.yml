@@ -12,7 +12,7 @@ variables:
   imageTag: '$(build.buildId)'
   apiProject: 'Starter.API'
   apiProjectDockerTag: 'boyankostadinov-starter.api'
-  messageConsumerDockerImage: '$(apiProjectDockerTag):$(imageTag)'
+  apiProjectDockerImage: '$(apiProjectDockerTag):$(imageTag)'
   apiProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(apiProject)'
   messageConsumerProject: 'Starter.MessageConsumer.Console'
   messageConsumerDockerTag: 'boyankostadinov-starter.messageconsumer.console'
