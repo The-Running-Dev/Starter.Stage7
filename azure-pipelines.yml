@@ -11,10 +11,10 @@ variables:
   testBuildConfiguration: 'Test'
   apiProject: 'Starter.API'
   apiProjectDockerImage: 'starter.api'
-  API_ARTIFACTS: '$(Build.ArtifactStagingDirectory)/$(apiProject)'
+  apiProjectArtifacts: '$(Build.ArtifactStagingDirectory)/$(apiProject)'
   messageConsumerProject: 'Starter.MessageConsumer.Console'
   messageConsumerDockerImage: 'starter.messageconsumer.console'
-  MESSAGE_CONSUMER_ARTIFACTS: '$(Build.ArtifactStagingDirectory)/$(messageConsumerProject)'
+  messageConsumerProjectArtifacts: '$(Build.ArtifactStagingDirectory)/$(messageConsumerProject)'
 
 steps:
 
@@ -22,12 +22,6 @@ steps:
   displayName: 'We Still Need 2.2...'
   inputs:
     version: '2.2.x'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Restoring Faith in the Nugets...'
-  inputs:
-    command: restore
-    projects: '$(projects)'
 
 - task: DotNetCoreCLI@2
   displayName: 'Converting to Bits...'
@@ -43,7 +37,7 @@ steps:
     arguments: '--configuration $(testBuildConfiguration)'
 
 - task: DotNetCoreCLI@2
-  displayName: 'API --> Pigeons...'
+  displayName: 'Publishing API...'
   inputs:
     command: publish
     projects: '**/$(apiProject)/*.csproj'
@@ -51,7 +45,7 @@ steps:
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 
 - task: DotNetCoreCLI@2
-  displayName: 'Message Consumer --> Pigeons...'
+  displayName: 'Publishing Message Consumer...'
   inputs:
     command: publish
     projects: '**/$(messageConsumerProject)/*.csproj'
@@ -59,17 +53,15 @@ steps:
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 
 - task: Docker@2
-  displayName: 'API Dockers Everywhere...'
+  displayName: 'Building API Container...'
   inputs:
     repository: '$(apiProjectDockerImage)'
     command: build
     Dockerfile: '$(apiProject)/Dockerfile'
-    arguments: --build-arg artifacts=$(Build.ArtifactStagingDirectory)/$(apiProject)
 
 - task: Docker@2
-  displayName: 'Consumer Dockers Everywhere...'
+  displayName: 'Building Consumer Container...'
   inputs:
     repository: '$(messageConsumerDockerImage)'
     command: build
     Dockerfile: '$(messageConsumerProject)/Dockerfile'
-    arguments: --build-arg artifacts=$(Build.ArtifactStagingDirectory)/$(messageConsumerProject)
