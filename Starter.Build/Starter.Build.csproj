@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\.artifactignore" Link=".artifactignore" />
     <None Include="..\azure-pipelines.yml" Link="azure-pipelines.yml" />
   </ItemGroup>
 

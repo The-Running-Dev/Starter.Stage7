@@ -4,7 +4,6 @@ ARG ARTIFACTS
 
 WORKDIR /
 
-COPY $ARTIFACTS/* .
-RUN rm $ARTIFACTS/*.pdb
+COPY $ARTIFACTS/ .
 
 ENTRYPOINT ["dotnet", "Starter.MessageConsumer.Console.dll"]

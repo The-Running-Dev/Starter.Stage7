@@ -7,7 +7,6 @@ WORKDIR /
 EXPOSE 80
 EXPOSE 443
 
-COPY $ARTIFACTS/* .
-RUN rm $ARTIFACTS/*.pdb
+COPY $ARTIFACTS/ .
 
 ENTRYPOINT ["dotnet", "Starter.API.dll"]
