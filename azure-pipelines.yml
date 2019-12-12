@@ -9,12 +9,17 @@ variables:
   buildConfiguration: 'Release'
   testProjects: '**/*.Tests/*.csproj'
   testBuildConfiguration: 'Test'
+  imageTag: '$(build.buildId)'
   apiProject: 'Starter.API'
-  apiProjectDockerImage: 'starter.api'
+  apiProjectDockerTag: 'boyankostadinov-starter.api'
+  messageConsumerDockerImage: '$(apiProjectDockerTag):$(imageTag)'
   apiProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(apiProject)'
   messageConsumerProject: 'Starter.MessageConsumer.Console'
-  messageConsumerDockerImage: 'starter.messageconsumer.console'
+  messageConsumerDockerTag: 'boyankostadinov-starter.messageconsumer.console'
+  messageConsumerDockerImage: '$(messageConsumerDockerTag):$(imageTag)'
   messageConsumerProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(messageConsumerProject)'
+  containerRegistry: 'astracontainerregistry.azurecr.io'
+  serviceConnection: 'astracontainerregistry'
 
 steps:
 
@@ -55,15 +60,51 @@ steps:
 - task: Docker@2
   displayName: 'Building API Container...'
   inputs:
-    repository: '$(apiProjectDockerImage)'
-    command: build
+    azureSubscriptionEndpoint: $(serviceConnection)
+    azureContainerRegistry: $(containerRegistry)
     dockerfile: '$(apiProject)/Dockerfile'
+    imageName: '$(apiProjectDockerImage)'
+    includeLatestTag: true
     buildContext: '$(apiProjectContext)'
+
+- task: Docker@1
+  displayName: 'Push API Image...'
+  inputs:
+    azureSubscriptionEndpoint: $(serviceConnection)
+    azureContainerRegistry: $(containerRegistry)
+    command: 'Push an image'
+    imageName: '$(apiProjectDockerImage)'
+ 
+- task: Docker@1
+  displayName: 'Push API Latest Image...'
+  inputs:
+    azureSubscriptionEndpoint: $(serviceConnection)
+    azureContainerRegistry: $(containerRegistry)
+    command: 'Push an image'
+    imageName: '$(apiProjectDockerImage):latest'
 
 - task: Docker@2
   displayName: 'Building Consumer Container...'
   inputs:
-    repository: '$(messageConsumerDockerImage)'
-    command: build
+    azureSubscriptionEndpoint: $(serviceConnection)
+    azureContainerRegistry: $(containerRegistry)
     dockerfile: '$(messageConsumerProject)/Dockerfile'
+    imageName: '$(messageConsumerDockerImage)'
+    includeLatestTag: true
     buildContext: '$(messageConsumerProjectContext)'
+
+- task: Docker@1
+  displayName: 'Push Consumer Image...'
+  inputs:
+    azureSubscriptionEndpoint: $(serviceConnection)
+    azureContainerRegistry: $(containerRegistry)
+    command: 'Push an image'
+    imageName: '$(messageConsumerDockerImage)'
+ 
+- task: Docker@1
+  displayName: 'Push Consumer Latest Image...'
+  inputs:
+    azureSubscriptionEndpoint: $(serviceConnection)
+    azureContainerRegistry: $(containerRegistry)
+    command: 'Push an image'
+    imageName: '$(messageConsumerDockerImage):latest'
