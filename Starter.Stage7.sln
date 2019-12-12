@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.7.md = README.7.md
 		README.8.md = README.8.md
 		README.9.md = README.9.md
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.API", "Starter.API\Starter.API.csproj", "{BAEDC3AC-5CCE-40B6-8AEB-295553DB3431}"
@@ -38,7 +39,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.MessageConsumer.Con
 EndProject
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "Starter.Resources.Azure", "Starter.Resources.Azure\Starter.Resources.Azure.deployproj", "{52EBCBAA-E3CA-44A4-82E6-392457621D88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starter.Build", "Starter.Build\Starter.Build.csproj", "{D4D70530-B6D4-4EC4-B104-A549DE58262E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.Build", "Starter.Build\Starter.Build.csproj", "{D4D70530-B6D4-4EC4-B104-A549DE58262E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
