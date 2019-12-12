@@ -57,11 +57,13 @@ steps:
   inputs:
     repository: '$(apiProjectDockerImage)'
     command: build
-    Dockerfile: '$(apiProject)/Dockerfile'
+    dockerfile: '$(apiProject)/Dockerfile'
+    buildContext: '$(apiProjectArtifacts)'
 
 - task: Docker@2
   displayName: 'Building Consumer Container...'
   inputs:
     repository: '$(messageConsumerDockerImage)'
     command: build
-    Dockerfile: '$(messageConsumerProject)/Dockerfile'
+    dockerfile: '$(messageConsumerProject)/Dockerfile'
+    buildContext: '$(messageConsumerProjectArtifacts)'

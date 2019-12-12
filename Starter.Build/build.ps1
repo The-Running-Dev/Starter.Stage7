@@ -40,11 +40,11 @@ Get-ChildItem -Recurs -File Dockerfile | ForEach-Object {
 	$projectName = (Split-Path $_.DirectoryName -Leaf)
 	$projectTag = $projectName.ToLower()
 	$projectLabel = $ExecutionContext.InvokeCommand.ExpandString($projectLabel)
-	$artificats = Join-Path $BuildArtifactStagingDirectory $projectName
+	$context = Join-Path $BuildArtifactStagingDirectory $projectName
 
 	Write-Output "
 Project: $projectName
-Artifacts: $artificats
+Context: $context
 Dockerfile: $dockerFile
 Label: $projectLabel
 Tag: $projectTag
@@ -56,6 +56,5 @@ Tag: $projectTag
 		-t $projectTag `
 		--label $vsLabel `
 		--label $projectLabel `
-		--no-cache `
-		$artificats
+		$context
 }
