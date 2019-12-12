@@ -18,8 +18,6 @@ variables:
   consumerDockerTag: 'boyankostadinov-starter.messageconsumer.console'
   consumerDockerImage: '$(consumerDockerTag):$(imageTag)'
   consumerProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(consumerProject)'
-  containerRegistry: '{"loginServer":"astracontainerregistry.azurecr.io", "id" : "/subscriptions/e1c5afc5-9085-48e6-b242-e93aeac67b3a/resourceGroups/astra-container-registry/providers/Microsoft.ContainerRegistry/registries/astracontainerregistry"}'
-  azureSubscription: 'Azure_Dev_Subscription'
 
 steps:
 
