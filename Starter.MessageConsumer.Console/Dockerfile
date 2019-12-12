@@ -1,12 +1,9 @@
-﻿FROM mcr.microsoft.com/dotnet/core/runtime:3.1-alpine AS base
+﻿FROM mcr.microsoft.com/dotnet/core/runtime:2.2-alpine AS base
 
-ARG artifacts
-
-ENV HOME_DIR=/
+ENV APP_DIR=/app
 ENV ENTRYPOINT="Starter.MessageConsumer.Console.dll"
 
-RUN echo "Artifacts: $artifacts"
-WORKDIR $artifacts
-COPY . $HOME_DIR
+COPY . $APP_DIR
 
-ENTRYPOINT ["dotnet", $ENTRYPOINT]
+WORKDIR $APP_DIR
+ENTRYPOINT dotnet $ENTRYPOINT
