@@ -1,9 +1,10 @@
 ﻿FROM mcr.microsoft.com/dotnet/core/runtime:3.1-alpine AS base
 
-ARG ARTIFACTS
+ARG artifacts
 
-WORKDIR /
+ENV HOME_DIR=/
+ENV ENTRYPOINT="Starter.MessageConsumer.Console.dll"
 
-COPY ["$ARTIFACTS/", "."]
+COPY $artifacts $HOME_DIR
 
-ENTRYPOINT ["dotnet", "Starter.MessageConsumer.Console.dll"]
+ENTRYPOINT ["dotnet", ENTRYPOINT]

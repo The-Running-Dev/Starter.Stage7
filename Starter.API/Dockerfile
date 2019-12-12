@@ -1,12 +1,13 @@
 ﻿FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-alpine AS base
 
-ARG ARTIFACTS
+ARG artifacts
 
-WORKDIR /
+ENV HOME_DIR=/
+ENV ENTRYPOINT="Starter.API.dll"
+
+COPY $artifacts $HOME_DIR
 
 EXPOSE 80
 EXPOSE 443
 
-COPY ["$ARTIFACTS/", "."]
-
-ENTRYPOINT ["dotnet", "Starter.API.dll"]
+ENTRYPOINT ["dotnet", ENTRYPOINT]
