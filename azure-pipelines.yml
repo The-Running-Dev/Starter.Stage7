@@ -11,15 +11,15 @@ variables:
   testBuildConfiguration: 'Test'
   imageTag: '$(build.buildId)'
   apiProject: 'Starter.API'
-  apiProjectDockerTag: 'boyankostadinov-starter.api'
-  apiProjectDockerImage: '$(apiProjectDockerTag):$(imageTag)'
+  apiDockerTag: 'boyankostadinov-starter.api'
+  apiDockerImage: '$(apiDockerTag):$(imageTag)'
   apiProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(apiProject)'
-  messageConsumerProject: 'Starter.MessageConsumer.Console'
-  messageConsumerDockerTag: 'boyankostadinov-starter.messageconsumer.console'
-  messageConsumerDockerImage: '$(messageConsumerDockerTag):$(imageTag)'
-  messageConsumerProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(messageConsumerProject)'
-  containerRegistry: 'astracontainerregistry.azurecr.io'
-  serviceConnection: 'astracontainerregistry'
+  consumerProject: 'Starter.MessageConsumer.Console'
+  consumerDockerTag: 'boyankostadinov-starter.messageconsumer.console'
+  consumerDockerImage: '$(consumerDockerTag):$(imageTag)'
+  consumerProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(consumerProject)'
+  containerRegistry: '{"loginServer":"astracontainerregistry.azurecr.io", "id" : "/subscriptions/e1c5afc5-9085-48e6-b242-e93aeac67b3a/resourceGroups/astra-container-registry/providers/Microsoft.ContainerRegistry/registries/astracontainerregistry"}'
+  azureSubscription: 'Azure_Dev_Subscription'
 
 steps:
 
@@ -53,58 +53,58 @@ steps:
   displayName: 'Publishing Message Consumer...'
   inputs:
     command: publish
-    projects: '**/$(messageConsumerProject)/*.csproj'
+    projects: '**/$(consumerProject)/*.csproj'
     publishWebProjects: false
-    arguments: '--configuration $(BuildConfiguration) --output $(messageConsumerProjectContext)'
+    arguments: '--configuration $(BuildConfiguration) --output $(consumerProjectContext)'
 
 - task: Docker@2
   displayName: 'Building API Container...'
   inputs:
-    azureSubscriptionEndpoint: $(serviceConnection)
+    azureSubscription: $(azureSubscription)
     azureContainerRegistry: $(containerRegistry)
     dockerfile: '$(apiProject)/Dockerfile'
-    imageName: '$(apiProjectDockerImage)'
+    imageName: '$(apiDockerImage)'
     includeLatestTag: true
     buildContext: '$(apiProjectContext)'
 
 - task: Docker@1
   displayName: 'Push API Image...'
   inputs:
-    azureSubscriptionEndpoint: $(serviceConnection)
+    azureSubscription: $(azureSubscription)
     azureContainerRegistry: $(containerRegistry)
     command: 'Push an image'
-    imageName: '$(apiProjectDockerImage)'
+    imageName: '$(apiDockerImage)'
  
 - task: Docker@1
   displayName: 'Push API Latest Image...'
   inputs:
-    azureSubscriptionEndpoint: $(serviceConnection)
+    azureSubscription: $(azureSubscription)
     azureContainerRegistry: $(containerRegistry)
     command: 'Push an image'
-    imageName: '$(apiProjectDockerImage):latest'
+    imageName: '$(apiDockerImage):latest'
 
 - task: Docker@2
   displayName: 'Building Consumer Container...'
   inputs:
-    azureSubscriptionEndpoint: $(serviceConnection)
+    azureSubscription: $(azureSubscription)
     azureContainerRegistry: $(containerRegistry)
-    dockerfile: '$(messageConsumerProject)/Dockerfile'
-    imageName: '$(messageConsumerDockerImage)'
+    dockerfile: '$(consumerProject)/Dockerfile'
+    imageName: '$(consumerDockerImage)'
     includeLatestTag: true
-    buildContext: '$(messageConsumerProjectContext)'
+    buildContext: '$(consumerProjectContext)'
 
 - task: Docker@1
   displayName: 'Push Consumer Image...'
   inputs:
-    azureSubscriptionEndpoint: $(serviceConnection)
+    azureSubscription: $(azureSubscription)
     azureContainerRegistry: $(containerRegistry)
     command: 'Push an image'
-    imageName: '$(messageConsumerDockerImage)'
+    imageName: '$(consumerDockerImage)'
  
 - task: Docker@1
   displayName: 'Push Consumer Latest Image...'
   inputs:
-    azureSubscriptionEndpoint: $(serviceConnection)
+    azureSubscription: $(azureSubscription)
     azureContainerRegistry: $(containerRegistry)
     command: 'Push an image'
-    imageName: '$(messageConsumerDockerImage):latest'
+    imageName: '$(consumerDockerImage):latest'
