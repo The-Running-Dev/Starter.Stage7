@@ -18,6 +18,7 @@ variables:
   consumerDockerTag: 'boyankostadinov-starter.messageconsumer.console'
   consumerDockerImage: '$(consumerDockerTag):$(imageTag)'
   consumerProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(consumerProject)'
+  containerRegistry: '{"loginServer":"astracontainerregistry.azurecr.io", "id" : "/subscriptions/e1c5afc5-9085-48e6-b242-e93aeac67b3a/resourceGroups/astra-container-registry/providers/Microsoft.ContainerRegistry/registries/astracontainerregistry"}'
 
 steps:
 
@@ -44,7 +45,6 @@ steps:
   inputs:
     command: publish
     projects: '**/$(apiProject)/*.csproj'
-    publishWebProjects: false
     arguments: '--configuration $(BuildConfiguration) --output $(apiProjectContext)'
 
 - task: DotNetCoreCLI@2
@@ -52,43 +52,40 @@ steps:
   inputs:
     command: publish
     projects: '**/$(consumerProject)/*.csproj'
-    publishWebProjects: false
     arguments: '--configuration $(BuildConfiguration) --output $(consumerProjectContext)'
 
 - task: Docker@2
   displayName: 'Building API Container...'
   inputs:
-    dockerfile: '$(apiProject)/Dockerfile'
     repository: 'astracontainerregistry.azurecr.io/$(apiDockerTag)'
+    command: build
+    dockerfile: '$(apiProject)/Dockerfile'
     buildContext: '$(apiProjectContext)'
-    tags: |
-      $(apiDockerImage)
-      latest
 
 - task: Docker@2
   displayName: 'Building Consumer Container...'
   inputs:
-    dockerfile: '$(consumerProject)/Dockerfile'
     repository: 'astracontainerregistry.azurecr.io/$(consumerDockerTag)'
+    command: build
+    dockerfile: '$(consumerProject)/Dockerfile'
     buildContext: '$(consumerProjectContext)'
-    tags: |
-      $(consumerDockerTag)
-      latest
-
-- task: Docker@2
-  displayName: Login to ACR
-  inputs:
-    command: login
-    containerRegistry: 'astracontainerregistry.azurecr.io'
 
 - task: Docker@2
   displayName: 'Push API Image...'
   inputs:
+    containerRegistry: '$(containerRegistry)'
     command: push
     repository: '$(apiDockerImage)'
+    tags: |
+      $(apiDockerImage)
+      latest
  
 - task: Docker@2
   displayName: 'Push Consumer Image...'
   inputs:
+    containerRegistry: '$(containerRegistry)'
     command: push
     repository: '$(consumerDockerImage)'
+    tags: |
+      $(consumerDockerTag)
+      latest
