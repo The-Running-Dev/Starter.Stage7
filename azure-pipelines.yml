@@ -61,7 +61,6 @@ steps:
   displayName: 'Building API Container...'
   inputs:
     dockerfile: '$(apiProject)/Dockerfile'
-    imageName: '$(apiDockerImage)'
     repository: 'astracontainerregistry.azurecr.io/$(apiDockerTag)'
     buildContext: '$(apiProjectContext)'
     tags: |
@@ -72,7 +71,6 @@ steps:
   displayName: 'Building Consumer Container...'
   inputs:
     dockerfile: '$(consumerProject)/Dockerfile'
-    imageName: '$(consumerDockerImage)'
     repository: 'astracontainerregistry.azurecr.io/$(consumerDockerTag)'
     buildContext: '$(consumerProjectContext)'
     tags: |
@@ -83,16 +81,15 @@ steps:
   displayName: Login to ACR
   inputs:
     command: login
-    containerRegistry: '$(containerRegistry)'
+    containerRegistry: 'astracontainerregistry.azurecr.io'
 
-- task: Docker@1
+- task: Docker@2
   displayName: 'Push API Image...'
   inputs:
-    containerRegistry: '$(containerRegistry)'
     command: push
     repository: '$(apiDockerImage)'
  
-- task: Docker@1
+- task: Docker@2
   displayName: 'Push Consumer Image...'
   inputs:
     command: push
