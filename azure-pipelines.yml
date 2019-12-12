@@ -11,10 +11,10 @@ variables:
   testBuildConfiguration: 'Test'
   apiProject: 'Starter.API'
   apiProjectDockerImage: 'starter.api'
-  apiProjectContext: '$(Build.ArtifactStagingDirectory)/$(apiProject)/'
+  apiProjectContext: '$(Build.ArtifactStagingDirectory)/$(apiProject)'
   messageConsumerProject: 'Starter.MessageConsumer.Console'
   messageConsumerDockerImage: 'starter.messageconsumer.console'
-  messageConsumerProjectContext: '$(Build.ArtifactStagingDirectory)/$(messageConsumerProject)/'
+  messageConsumerProjectContext: '$(Build.ArtifactStagingDirectory)/$(messageConsumerProject)'
 
 steps:
 
@@ -58,7 +58,7 @@ steps:
     repository: '$(apiProjectDockerImage)'
     command: build
     dockerfile: '$(apiProject)/Dockerfile'
-    buildContext: '$(apiProjectContext)'
+    buildContext: '$(Build.ArtifactStagingDirectory)/$(apiProject)'
 
 - task: Docker@2
   displayName: 'Building Consumer Container...'
@@ -66,4 +66,4 @@ steps:
     repository: '$(messageConsumerDockerImage)'
     command: build
     dockerfile: '$(messageConsumerProject)/Dockerfile'
-    buildContext: '$(messageConsumerProjectContext)'
+    buildContext: '$(Build.ArtifactStagingDirectory)/$(messageConsumerProject)'

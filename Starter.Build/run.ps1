@@ -1,3 +1,14 @@
-$composeFile = Join-Path $PSScriptRoot 'docker-compose.yaml' -Resolve
+param(
+	[switch] $AsDaemon = $false
+)
 
-& docker-compose -f $composeFile up
+$command = 'docker-compose'
+
+$fileSwitch = '-f'
+$composeFile = (Join-Path $PSScriptRoot 'docker-compose.yaml' -Resolve)
+$upArgument = 'up'
+$detachArgument = @{$true = '-d'; $false = '';}[$AsDaemon -eq $true]
+
+$arguments = @($fileSwitch, $composeFile, $upArgument, $detachArgument)
+
+& $command $arguments
