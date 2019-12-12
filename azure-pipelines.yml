@@ -79,7 +79,7 @@ steps:
     command: push
     repository: 'astracontainerregistry.azurecr.io/$(apiDockerTag)'
     tags: |
-      $(apiDockerImage)
+      $(imageTag)
       latest
  
 - task: Docker@2
@@ -89,5 +89,5 @@ steps:
     command: push
     repository: 'astracontainerregistry.azurecr.io/$(consumerDockerTag)'
     tags: |
-      $(consumerDockerTag)
+      $(imageTag)
       latest
