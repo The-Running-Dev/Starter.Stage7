@@ -11,10 +11,10 @@ variables:
   testBuildConfiguration: 'Test'
   apiProject: 'Starter.API'
   apiProjectDockerImage: 'starter.api'
-  apiProjectContext: '$(Build.ArtifactStagingDirectory)/$(apiProject)'
+  apiProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(apiProject)'
   messageConsumerProject: 'Starter.MessageConsumer.Console'
   messageConsumerDockerImage: 'starter.messageconsumer.console'
-  messageConsumerProjectContext: '$(Build.ArtifactStagingDirectory)/$(messageConsumerProject)'
+  messageConsumerProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(messageConsumerProject)'
 
 steps:
 
@@ -42,7 +42,7 @@ steps:
     command: publish
     projects: '**/$(apiProject)/*.csproj'
     publishWebProjects: false
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    arguments: '--configuration $(BuildConfiguration) --output $(apiProjectContext)'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publishing Message Consumer...'
@@ -50,7 +50,7 @@ steps:
     command: publish
     projects: '**/$(messageConsumerProject)/*.csproj'
     publishWebProjects: false
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    arguments: '--configuration $(BuildConfiguration) --output $(messageConsumerProjectContext)'
 
 - task: Docker@2
   displayName: 'Building API Container...'
@@ -58,7 +58,7 @@ steps:
     repository: '$(apiProjectDockerImage)'
     command: build
     dockerfile: '$(apiProject)/Dockerfile'
-    buildContext: '$(Build.ArtifactStagingDirectory)/$(apiProject)'
+    buildContext: '$(apiProjectContext)'
 
 - task: Docker@2
   displayName: 'Building Consumer Container...'
@@ -66,4 +66,4 @@ steps:
     repository: '$(messageConsumerDockerImage)'
     command: build
     dockerfile: '$(messageConsumerProject)/Dockerfile'
-    buildContext: '$(Build.ArtifactStagingDirectory)/$(messageConsumerProject)'
+    buildContext: '$(messageConsumerProjectContext)'
