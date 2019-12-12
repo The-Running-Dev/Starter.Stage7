@@ -6,6 +6,7 @@ ENV HOME_DIR=/
 ENV ENTRYPOINT="Starter.MessageConsumer.Console.dll"
 
 RUN echo "Artifacts: $artifacts"
-COPY $artifacts $HOME_DIR
+WORKDIR $artifacts
+COPY . $HOME_DIR
 
 ENTRYPOINT ["dotnet", $ENTRYPOINT]

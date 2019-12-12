@@ -6,7 +6,8 @@ ENV HOME_DIR=/
 ENV ENTRYPOINT="Starter.API.dll"
 
 RUN echo "Artifacts: $artifacts"
-COPY $artifacts $HOME_DIR
+WORKDIR $artifacts
+COPY . $HOME_DIR
 
 EXPOSE 80
 EXPOSE 443
