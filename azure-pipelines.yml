@@ -18,7 +18,7 @@ variables:
   consumerDockerTag: 'boyankostadinov-starter.messageconsumer.console'
   consumerDockerImage: '$(consumerDockerTag):$(imageTag)'
   consumerProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(consumerProject)'
-  containerRegistry: '{"loginServer":"astracontainerregistry.azurecr.io", "id" : "/subscriptions/e1c5afc5-9085-48e6-b242-e93aeac67b3a/resourceGroups/astra-container-registry/providers/Microsoft.ContainerRegistry/registries/astracontainerregistry"}'
+  serviceConnection: 'freecrhussazuredevops'
 
 steps:
 
@@ -45,6 +45,7 @@ steps:
   inputs:
     command: publish
     projects: '**/$(apiProject)/*.csproj'
+    publishWebProjects: false
     arguments: '--configuration $(BuildConfiguration) --output $(apiProjectContext)'
 
 - task: DotNetCoreCLI@2
@@ -52,6 +53,7 @@ steps:
   inputs:
     command: publish
     projects: '**/$(consumerProject)/*.csproj'
+    publishWebProjects: false
     arguments: '--configuration $(BuildConfiguration) --output $(consumerProjectContext)'
 
 - task: Docker@2
@@ -71,9 +73,9 @@ steps:
     buildContext: '$(consumerProjectContext)'
 
 - task: Docker@2
-  displayName: 'Push API Image...'
+  displayName: 'Pushing API Image...'
   inputs:
-    containerRegistry: '$(containerRegistry)'
+    containerRegistry: '$(serviceConnection)'
     command: push
     repository: '$(apiDockerImage)'
     tags: |
@@ -81,9 +83,9 @@ steps:
       latest
  
 - task: Docker@2
-  displayName: 'Push Consumer Image...'
+  displayName: 'Pushing Consumer Image...'
   inputs:
-    containerRegistry: '$(containerRegistry)'
+    containerRegistry: '$(serviceConnection)'
     command: push
     repository: '$(consumerDockerImage)'
     tags: |
