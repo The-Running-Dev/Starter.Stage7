@@ -60,53 +60,40 @@ steps:
 - task: Docker@2
   displayName: 'Building API Container...'
   inputs:
-    azureSubscription: $(azureSubscription)
-    azureContainerRegistry: $(containerRegistry)
     dockerfile: '$(apiProject)/Dockerfile'
     imageName: '$(apiDockerImage)'
-    repository: '$(apiDockerTag)'
-    includeLatestTag: true
+    repository: 'astracontainerregistry.azurecr.io/$(apiDockerTag)'
     buildContext: '$(apiProjectContext)'
-
-- task: Docker@1
-  displayName: 'Push API Image...'
-  inputs:
-    azureSubscription: $(azureSubscription)
-    azureContainerRegistry: $(containerRegistry)
-    command: 'Push an image'
-    imageName: '$(apiDockerImage)'
- 
-- task: Docker@1
-  displayName: 'Push API Latest Image...'
-  inputs:
-    azureSubscription: $(azureSubscription)
-    azureContainerRegistry: $(containerRegistry)
-    command: 'Push an image'
-    imageName: '$(apiDockerImage):latest'
+    tags: |
+      $(apiDockerImage)
+      latest
 
 - task: Docker@2
   displayName: 'Building Consumer Container...'
   inputs:
-    azureSubscription: $(azureSubscription)
-    azureContainerRegistry: $(containerRegistry)
     dockerfile: '$(consumerProject)/Dockerfile'
     imageName: '$(consumerDockerImage)'
-    repository: '$(consumerDockerTag)'
-    includeLatestTag: true
+    repository: 'astracontainerregistry.azurecr.io/$(consumerDockerTag)'
     buildContext: '$(consumerProjectContext)'
+    tags: |
+      $(consumerDockerTag)
+      latest
 
+- task: Docker@2
+  displayName: Login to ACR
+  inputs:
+    command: login
+    containerRegistry: '$(containerRegistry)'
+
+- task: Docker@1
+  displayName: 'Push API Image...'
+  inputs:
+    containerRegistry: '$(containerRegistry)'
+    command: push
+    repository: '$(apiDockerImage)'
+ 
 - task: Docker@1
   displayName: 'Push Consumer Image...'
   inputs:
-    azureSubscription: $(azureSubscription)
-    azureContainerRegistry: $(containerRegistry)
-    command: 'Push an image'
-    imageName: '$(consumerDockerImage)'
- 
-- task: Docker@1
-  displayName: 'Push Consumer Latest Image...'
-  inputs:
-    azureSubscription: $(azureSubscription)
-    azureContainerRegistry: $(containerRegistry)
-    command: 'Push an image'
-    imageName: '$(consumerDockerImage):latest'
+    command: push
+    repository: '$(consumerDockerImage)'
