@@ -77,7 +77,7 @@ steps:
   inputs:
     containerRegistry: '$(serviceConnection)'
     command: push
-    repository: '$(apiDockerImage)'
+    repository: 'astracontainerregistry.azurecr.io/$(apiDockerTag)'
     tags: |
       $(apiDockerImage)
       latest
@@ -87,7 +87,7 @@ steps:
   inputs:
     containerRegistry: '$(serviceConnection)'
     command: push
-    repository: '$(consumerDockerImage)'
+    repository: 'astracontainerregistry.azurecr.io/$(consumerDockerTag)'
     tags: |
       $(consumerDockerTag)
       latest
