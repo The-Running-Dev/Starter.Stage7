@@ -64,6 +64,7 @@ steps:
     azureContainerRegistry: $(containerRegistry)
     dockerfile: '$(apiProject)/Dockerfile'
     imageName: '$(apiDockerImage)'
+    repository: '$(apiDockerImage)'
     includeLatestTag: true
     buildContext: '$(apiProjectContext)'
 
@@ -90,6 +91,7 @@ steps:
     azureContainerRegistry: $(containerRegistry)
     dockerfile: '$(consumerProject)/Dockerfile'
     imageName: '$(consumerDockerImage)'
+    repository: '$(consumerDockerImage)'
     includeLatestTag: true
     buildContext: '$(consumerProjectContext)'
 
