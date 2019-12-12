@@ -7,4 +7,4 @@ ENV ENTRYPOINT="Starter.MessageConsumer.Console.dll"
 
 COPY $artifacts $HOME_DIR
 
-ENTRYPOINT ["dotnet", ENTRYPOINT]
+ENTRYPOINT ["dotnet", $ENTRYPOINT]
