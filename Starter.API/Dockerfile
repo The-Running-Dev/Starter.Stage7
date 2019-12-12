@@ -5,6 +5,7 @@ ARG artifacts
 ENV HOME_DIR=/
 ENV ENTRYPOINT="Starter.API.dll"
 
+RUN echo "Artifacts: $artifacts"
 COPY $artifacts $HOME_DIR
 
 EXPOSE 80
