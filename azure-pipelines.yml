@@ -47,7 +47,9 @@ steps:
     command: publish
     projects: '**/$(apiProject)/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(apiProjectContext)'
+    publishWebProjects: true
     zipAfterPublish: false
+    modifyOutputPath: false
 
 - task: DotNetCoreCLI@2
   displayName: 'Publishing Consumer...'
@@ -55,7 +57,9 @@ steps:
     command: publish
     projects: '**/$(consumerProject)/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(consumerProjectContext)'
+    publishWebProjects: true
     zipAfterPublish: false
+    modifyOutputPath: false
 
 - task: Docker@2
   displayName: 'Building API Container...'
