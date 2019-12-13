@@ -139,4 +139,4 @@ stages:
               connectionType: Kubernetes Service Connection
               kubernetesServiceEndpoint: '$(kubernetesServiceConnection)'
               command: apply
-              arguments: -f $(System.ArtifactsDirectory)/$(kubernetesManifests)
+              arguments: -f $(System.DefaultWorkingDirectory)/$(kubernetesManifests)
