@@ -18,7 +18,7 @@ variables:
   apiProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(apiProject)'
 
   consumerProject: 'Starter.MessageConsumer.Console'
-  consumerDockerTag: 'boyankostadinov-starter.messageconsumer.console'
+  consumerDockerTag: 'boyankostadinov-starter.consumer'
   consumerDockerImage: '$(consumerDockerTag):$(imageTag)'
   consumerProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(consumerProject)'
 
@@ -96,3 +96,23 @@ steps:
     azureContainerRegistry: '$(azureContainerRegistry)'
     action: 'Push an image'
     imageName: '$(consumerDockerImage)'
+
+- task: Docker@2
+  displayName: 'Pushing API Image...'
+  inputs:
+    containerRegistry: '$(containerRegistryServiceConnection)'
+    command: push
+    repository: 'astracontainerregistry.azurecr.io/$(apiDockerTag)'
+    tags: |
+      $(imageTag)
+      latest
+
+- task: Docker@2
+  displayName: 'Pushing Consumer Image...'
+  inputs:
+    containerRegistry: '$(containerRegistryServiceConnection)'
+    command: push
+    repository: 'astracontainerregistry.azurecr.io/$(consumerDockerTag)'
+    tags: |
+      $(imageTag)
+      latest
