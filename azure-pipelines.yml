@@ -25,9 +25,6 @@ variables:
   containerRegistry: 'astracontainerregistry.azurecr.io'
   containerRegistryServiceConnection: 'astra_container_registry'
 
-azureSubscription: 'Azure_Dev_Subscription'
-  azureContainerRegistry: '{"loginServer":"astracontainerregistry.azurecr.io", "id" : "/subscriptions/e1c5afc5-9085-48e6-b242-e93aeac67b3a/resourceGroups/astra-container-registry/providers/Microsoft.ContainerRegistry/registries/astracontainerregistry"}'
-
 steps:
 
 - task: UseDotNet@2
