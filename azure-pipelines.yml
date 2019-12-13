@@ -46,16 +46,16 @@ steps:
   inputs:
     command: publish
     projects: '**/$(apiProject)/*.csproj'
-    publishWebProjects: false
     arguments: '--configuration $(BuildConfiguration) --output $(apiProjectContext)'
+    zipAfterPublish: false
 
 - task: DotNetCoreCLI@2
   displayName: 'Publishing Consumer...'
   inputs:
     command: publish
     projects: '**/$(consumerProject)/*.csproj'
-    publishWebProjects: false
     arguments: '--configuration $(BuildConfiguration) --output $(consumerProjectContext)'
+    zipAfterPublish: false
 
 - task: Docker@2
   displayName: 'Building API Container...'
