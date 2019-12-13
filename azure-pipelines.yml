@@ -9,104 +9,124 @@ variables:
   buildConfiguration: 'Release'
   testProjects: '**/*.Tests/*.csproj'
   testBuildConfiguration: 'Test'
-  imageTag: '$(build.buildId)'
+
   apiProject: 'Starter.API'
-  apiDockerTag: 'boyankostadinov-starter.api'
-  apiDockerImage: '$(apiDockerTag):$(imageTag)'
+  apiDockerImage: 'boyankostadinov-starter.api'
   apiProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(apiProject)'
+
   consumerProject: 'Starter.MessageConsumer.Console'
-  consumerDockerTag: 'boyankostadinov-starter.messageconsumer.console'
-  consumerDockerImage: '$(consumerDockerTag):$(imageTag)'
+  consumerDockerImage: 'boyankostadinov-starter.consumer'
   consumerProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(consumerProject)'
-  containerRegistry: '{"loginServer":"astracontainerregistry.azurecr.io", "id" : "/subscriptions/e1c5afc5-9085-48e6-b242-e93aeac67b3a/resourceGroups/astra-container-registry/providers/Microsoft.ContainerRegistry/registries/astracontainerregistry"}'
-  azureSubscription: 'Azure_Dev_Subscription'
 
-steps:
+  containerRegistry: 'astracontainerregistry.azurecr.io'
+  containerRegistryServiceConnection: 'astra_container_registry'
 
-- task: UseDotNet@2
-  displayName: 'We Still Need 2.2...'
-  inputs:
-    version: '2.2.x'
+  kubernetesServiceConnection: 'dev-atra-boyankostadinov-kubernetes'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Converting to Bits...'
-  inputs:
-    command: build
-    projects: '$(projects)'
+stages:
+- stage: Build
+  displayName: Build Stage
+  jobs:
+  - job: Build
+    displayName: Build
+    steps:
+    - task: UseDotNet@2
+      displayName: 'We Still Need 2.2...'
+      inputs:
+        version: '2.2.x'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Common, Common, Pass Already...'
-  inputs:
-    command: test
-    projects: '$(testProjects)'
-    arguments: '--configuration $(testBuildConfiguration)'
+    - task: DotNetCoreCLI@2
+      displayName: 'Converting to Bits...'
+      inputs:
+        command: build
+        projects: '$(projects)'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Publishing API...'
-  inputs:
-    command: publish
-    projects: '**/$(apiProject)/*.csproj'
-    publishWebProjects: false
-    arguments: '--configuration $(BuildConfiguration) --output $(apiProjectContext)'
+    - task: DotNetCoreCLI@2
+      displayName: 'Common, Common, Pass Already...'
+      inputs:
+        command: test
+        projects: '$(testProjects)'
+        arguments: '--configuration $(testBuildConfiguration)'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Publishing Message Consumer...'
-  inputs:
-    command: publish
-    projects: '**/$(consumerProject)/*.csproj'
-    publishWebProjects: false
-    arguments: '--configuration $(BuildConfiguration) --output $(consumerProjectContext)'
+    - task: DotNetCoreCLI@2
+      displayName: 'Publishing API...'
+      inputs:
+        command: publish
+        projects: '**/$(apiProject)/*.csproj'
+        arguments: '--configuration $(BuildConfiguration) --output $(apiProjectContext)'
+        publishWebProjects: true
+        zipAfterPublish: false
+        modifyOutputPath: false
 
-- task: Docker@2
-  displayName: 'Building API Container...'
-  inputs:
-    azureSubscription: $(azureSubscription)
-    azureContainerRegistry: $(containerRegistry)
-    dockerfile: '$(apiProject)/Dockerfile'
-    imageName: '$(apiDockerImage)'
-    repository: '$(apiDockerTag)'
-    includeLatestTag: true
-    buildContext: '$(apiProjectContext)'
+    - task: DotNetCoreCLI@2
+      displayName: 'Publishing Consumer...'
+      inputs:
+        command: publish
+        projects: '**/$(consumerProject)/*.csproj'
+        arguments: '--configuration $(BuildConfiguration) --output $(consumerProjectContext)'
+        zipAfterPublish: false
+        modifyOutputPath: false
 
-- task: Docker@1
-  displayName: 'Push API Image...'
-  inputs:
-    azureSubscription: $(azureSubscription)
-    azureContainerRegistry: $(containerRegistry)
-    command: 'Push an image'
-    imageName: '$(apiDockerImage)'
- 
-- task: Docker@1
-  displayName: 'Push API Latest Image...'
-  inputs:
-    azureSubscription: $(azureSubscription)
-    azureContainerRegistry: $(containerRegistry)
-    command: 'Push an image'
-    imageName: '$(apiDockerImage):latest'
+    - task: Docker@2
+      displayName: 'Building API Container...'
+      inputs:
+        containerRegistry: '$(containerRegistryServiceConnection)'
+        repository: '$(apiDockerImage)'
+        command: build
+        dockerfile: '$(apiProject)/Dockerfile'
+        buildContext: '$(apiProjectContext)'
+        tags: |
+          $(Build.BuildId)
+          latest
 
-- task: Docker@2
-  displayName: 'Building Consumer Container...'
-  inputs:
-    azureSubscription: $(azureSubscription)
-    azureContainerRegistry: $(containerRegistry)
-    dockerfile: '$(consumerProject)/Dockerfile'
-    imageName: '$(consumerDockerImage)'
-    repository: '$(consumerDockerTag)'
-    includeLatestTag: true
-    buildContext: '$(consumerProjectContext)'
+    - task: Docker@2
+      displayName: 'Building Consumer Container...'
+      inputs:
+        containerRegistry: '$(containerRegistryServiceConnection)'
+        repository: '$(consumerDockerImage)'
+        command: build
+        dockerfile: '$(consumerProject)/Dockerfile'
+        buildContext: '$(consumerProjectContext)'
+        tags: |
+          $(Build.BuildId)
+          latest
 
-- task: Docker@1
-  displayName: 'Push Consumer Image...'
-  inputs:
-    azureSubscription: $(azureSubscription)
-    azureContainerRegistry: $(containerRegistry)
-    command: 'Push an image'
-    imageName: '$(consumerDockerImage)'
- 
-- task: Docker@1
-  displayName: 'Push Consumer Latest Image...'
-  inputs:
-    azureSubscription: $(azureSubscription)
-    azureContainerRegistry: $(containerRegistry)
-    command: 'Push an image'
-    imageName: '$(consumerDockerImage):latest'
+    - task: Docker@2
+      displayName: 'Pushing API Image...'
+      inputs:
+        containerRegistry: '$(containerRegistryServiceConnection)'
+        repository: '$(apiDockerImage)'
+        command: push
+        tags: |
+          $(Build.BuildId)
+          latest
+
+    - task: Docker@2
+      displayName: 'Pushing Consumer Image...'
+      inputs:
+        containerRegistry: '$(containerRegistryServiceConnection)'
+        repository: '$(consumerDockerImage)'
+        command: push
+        tags: |
+          $(Build.BuildId)
+          latest
+
+- stage: Deploy
+  displayName: Deploy Stage
+  dependsOn: Build
+
+  jobs:
+  - deployment: Deploy
+    condition: succeeded()
+    displayName: Deploy
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: Kubernetes@1
+          displayName: 'Deploying Cluster...'
+          inputs:
+            connectionType: Kubernetes Service Connection
+            kubernetesServiceEndpoint: '$(kubernetesServiceConnection)'
+            command: apply
+            arguments: -f kubernetes-cluster.yml
