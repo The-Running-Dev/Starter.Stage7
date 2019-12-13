@@ -21,8 +21,8 @@ variables:
   containerRegistry: 'astracontainerregistry.azurecr.io'
   containerRegistryServiceConnection: 'astra_container_registry'
 
-  manifestsDirectory: 'Starter.Build'
-  kubernetesManifests: 'kubernetes-cluster.yml'
+  manifestsDirectory: '$(Build.Repository.LocalPath)/Manifests'
+  kubernetesManifest: 'Manifests/kubernetes-cluster.yml'
   kubernetesServiceConnection: 'dev-atra-boyankostadinov-kubernetes'
   kubernetesEnvironment: 'dev-astra-boyankostadinov-starter-aksnamespace'
 
@@ -139,4 +139,4 @@ stages:
               connectionType: Kubernetes Service Connection
               kubernetesServiceEndpoint: '$(kubernetesServiceConnection)'
               command: apply
-              arguments: -f $(System.DefaultWorkingDirectory)/$(kubernetesManifests)
+              arguments: -f $(kubernetesManifest)
