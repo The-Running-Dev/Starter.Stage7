@@ -1,142 +1,148 @@
 trigger:
-- master
+  - master
 
 pool:
-  vmImage: 'ubuntu-18.04'
+  vmImage: "ubuntu-18.04"
 
 variables:
-  projects: '**/*.csproj'
-  buildConfiguration: 'Release'
-  testProjects: '**/*.Tests/*.csproj'
-  testBuildConfiguration: 'Test'
+  projects: "**/*.csproj"
+  buildConfiguration: "Release"
+  testProjects: "**/*.Tests/*.csproj"
+  testBuildConfiguration: "Test"
 
-  apiProject: 'Starter.API'
-  apiDockerImage: 'boyankostadinov-starter.api'
-  apiProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(apiProject)'
+  apiProject: "Starter.API"
+  apiDockerImage: "boyankostadinov-starter.api"
+  apiProjectContext: "$(Build.Repository.LocalPath)/Artifacts/$(apiProject)"
 
-  consumerProject: 'Starter.MessageConsumer.Console'
-  consumerDockerImage: 'boyankostadinov-starter.consumer'
-  consumerProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(consumerProject)'
+  consumerProject: "Starter.MessageConsumer.Console"
+  consumerDockerImage: "boyankostadinov-starter.consumer"
+  consumerProjectContext: "$(Build.Repository.LocalPath)/Artifacts/$(consumerProject)"
 
-  containerRegistry: 'astracontainerregistry.azurecr.io'
-  containerRegistryServiceConnection: 'astra_container_registry'
+  containerRegistry: "astracontainerregistry.azurecr.io"
+  containerRegistryServiceConnection: "astra_container_registry"
 
-  manifestsDirectory: '$(Build.Repository.LocalPath)/Manifests'
-  kubernetesManifest: 'Manifests/kubernetes-cluster.yml'
-  kubernetesServiceConnection: 'dev-atra-boyankostadinov-kubernetes'
-  kubernetesEnvironment: 'dev-astra-boyankostadinov-starter-aksnamespace'
+  manifestsDirectory: "$(Build.Repository.LocalPath)/Manifests"
+  kubernetesManifest: "Manifests/kubernetes-cluster.yml"
+  kubernetesServiceConnection: "dev-atra-boyankostadinov-kubernetes"
+  kubernetesEnvironment: "dev-astra-boyankostadinov-starter-aksnamespace"
 
 stages:
-- stage: Build
-  displayName: Build Stage
-  jobs:
-  - job: Build
-    displayName: Build
-    steps:
-    - task: UseDotNet@2
-      displayName: 'We Still Need 2.2...'
-      inputs:
-        version: '2.2.x'
-
-    - task: DotNetCoreCLI@2
-      displayName: 'Converting to Bits...'
-      inputs:
-        command: build
-        projects: '$(projects)'
-
-    - task: DotNetCoreCLI@2
-      displayName: 'Common, Common, Pass Already...'
-      inputs:
-        command: test
-        projects: '$(testProjects)'
-        arguments: '--configuration $(testBuildConfiguration)'
-
-    - task: DotNetCoreCLI@2
-      displayName: 'Publishing API...'
-      inputs:
-        command: publish
-        projects: '**/$(apiProject)/*.csproj'
-        arguments: '--configuration $(BuildConfiguration) --output $(apiProjectContext)'
-        publishWebProjects: true
-        zipAfterPublish: false
-        modifyOutputPath: false
-
-    - task: DotNetCoreCLI@2
-      displayName: 'Publishing Consumer...'
-      inputs:
-        command: publish
-        projects: '**/$(consumerProject)/*.csproj'
-        arguments: '--configuration $(BuildConfiguration) --output $(consumerProjectContext)'
-        zipAfterPublish: false
-        modifyOutputPath: false
-
-    - task: Docker@2
-      displayName: 'Building API Container...'
-      inputs:
-        containerRegistry: '$(containerRegistryServiceConnection)'
-        repository: '$(apiDockerImage)'
-        command: build
-        dockerfile: '$(apiProject)/Dockerfile'
-        buildContext: '$(apiProjectContext)'
-        tags: |
-          $(Build.BuildId)
-          latest
-
-    - task: Docker@2
-      displayName: 'Building Consumer Container...'
-      inputs:
-        containerRegistry: '$(containerRegistryServiceConnection)'
-        repository: '$(consumerDockerImage)'
-        command: build
-        dockerfile: '$(consumerProject)/Dockerfile'
-        buildContext: '$(consumerProjectContext)'
-        tags: |
-          $(Build.BuildId)
-          latest
-
-    - task: Docker@2
-      displayName: 'Pushing API Image...'
-      inputs:
-        containerRegistry: '$(containerRegistryServiceConnection)'
-        repository: '$(apiDockerImage)'
-        command: push
-        tags: |
-          $(Build.BuildId)
-          latest
-
-    - task: Docker@2
-      displayName: 'Pushing Consumer Image...'
-      inputs:
-        containerRegistry: '$(containerRegistryServiceConnection)'
-        repository: '$(consumerDockerImage)'
-        command: push
-        tags: |
-          $(Build.BuildId)
-          latest
-
-    - task: PublishPipelineArtifact@0
-      displayName: 'Publishing Manifests...'
-      inputs:
-        artifactName: 'manifests'
-        targetPath: '$(manifestsDirectory)'
-
-- stage: Deploy
-  displayName: Deploy Stage
-  dependsOn: Build
-
-  jobs:
-  - deployment: Deploy
-    condition: succeeded()
-    displayName: Deploy
-    environment: '$(kubernetesEnvironment)'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: Kubernetes@1
-            displayName: 'Deploying Cluster...'
+  - stage: Build
+    displayName: Build Stage
+    jobs:
+      - job: Build
+        displayName: Build
+        steps:
+          - task: UseDotNet@2
+            displayName: "We Still Need 2.2..."
             inputs:
-              connectionType: Kubernetes Service Connection
-              kubernetesServiceEndpoint: '$(kubernetesServiceConnection)'
-              command: apply
-              arguments: -f $(kubernetesManifest)
+              version: "2.2.x"
+
+          - task: DotNetCoreCLI@2
+            displayName: "Converting to Bits..."
+            inputs:
+              command: build
+              projects: "$(projects)"
+
+          - task: DotNetCoreCLI@2
+            displayName: "Common, Common, Pass Already..."
+            inputs:
+              command: test
+              projects: "$(testProjects)"
+              arguments: "--configuration $(testBuildConfiguration)"
+
+          - task: DotNetCoreCLI@2
+            displayName: "Publishing API..."
+            inputs:
+              command: publish
+              projects: "**/$(apiProject)/*.csproj"
+              arguments: "--configuration $(BuildConfiguration) --output $(apiProjectContext)"
+              publishWebProjects: true
+              zipAfterPublish: false
+              modifyOutputPath: false
+
+          - task: DotNetCoreCLI@2
+            displayName: "Publishing Consumer..."
+            inputs:
+              command: publish
+              projects: "**/$(consumerProject)/*.csproj"
+              arguments: "--configuration $(BuildConfiguration) --output $(consumerProjectContext)"
+              zipAfterPublish: false
+              modifyOutputPath: false
+
+          - task: Docker@2
+            displayName: "Building API Container..."
+            inputs:
+              containerRegistry: "$(containerRegistryServiceConnection)"
+              repository: "$(apiDockerImage)"
+              command: build
+              dockerfile: "$(apiProject)/Dockerfile"
+              buildContext: "$(apiProjectContext)"
+              tags: |
+                $(Build.BuildId)
+                latest
+
+          - task: Docker@2
+            displayName: "Building Consumer Container..."
+            inputs:
+              containerRegistry: "$(containerRegistryServiceConnection)"
+              repository: "$(consumerDockerImage)"
+              command: build
+              dockerfile: "$(consumerProject)/Dockerfile"
+              buildContext: "$(consumerProjectContext)"
+              tags: |
+                $(Build.BuildId)
+                latest
+
+          - task: Docker@2
+            displayName: "Pushing API Image..."
+            inputs:
+              containerRegistry: "$(containerRegistryServiceConnection)"
+              repository: "$(apiDockerImage)"
+              command: push
+              tags: |
+                $(Build.BuildId)
+                latest
+
+          - task: Docker@2
+            displayName: "Pushing Consumer Image..."
+            inputs:
+              containerRegistry: "$(containerRegistryServiceConnection)"
+              repository: "$(consumerDockerImage)"
+              command: push
+              tags: |
+                $(Build.BuildId)
+                latest
+
+          - task: PublishPipelineArtifact@0
+            displayName: "Publishing Manifests..."
+            inputs:
+              artifactName: "manifests"
+              targetPath: "$(manifestsDirectory)"
+
+  - stage: Deploy
+    displayName: Deploy Stage
+    dependsOn: Build
+
+    jobs:
+      - deployment: Deploy
+        condition: succeeded()
+        displayName: Deploy
+        environment: "$(kubernetesEnvironment)"
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadPipelineArtifact@1
+                  inputs:
+                  buildType: "current"
+                  artifactName: "manifests"
+                  targetPath: "$(System.ArtifactsDirectory)/Manifests"
+
+                - task: Kubernetes@1
+                  displayName: "Deploying Cluster..."
+                  inputs:
+                    connectionType: Kubernetes Service Connection
+                    kubernetesServiceEndpoint: "$(kubernetesServiceConnection)"
+                    command: apply
+                    arguments: -f $(kubernetesManifest)
