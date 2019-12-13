@@ -80,13 +80,13 @@ steps:
 - task: Docker@2
   displayName: 'Pushing API Image...'
   inputs:
+    repository: '$(containerRegistry)/$(apiDockerTag)'
     containerRegistry: '$(containerRegistryServiceConnection)'
     command: push
-    repository: '$(apiDockerImage)'
 
 - task: Docker@2
   displayName: 'Pushing Consumer Image...'
   inputs:
+    repository: '$(containerRegistry)/$(consumerDockerTag)'
     containerRegistry: '$(containerRegistryServiceConnection)'
     command: push
-    repository: '$(consumerDockerImage)'
