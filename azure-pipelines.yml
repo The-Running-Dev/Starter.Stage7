@@ -22,7 +22,7 @@ variables:
   containerRegistryServiceConnection: "astra_container_registry"
 
   manifestsDirectory: "$(Build.Repository.LocalPath)/Manifests"
-  kubernetesManifest: "Manifests/kubernetes-cluster.yml"
+  kubernetesManifest: "kubernetes-cluster.yml"
   kubernetesServiceConnection: "dev-atra-boyankostadinov-kubernetes"
   kubernetesEnvironment: "dev-astra-boyankostadinov-starter-aksnamespace"
 
@@ -134,15 +134,16 @@ stages:
             deploy:
               steps:
                 - task: DownloadPipelineArtifact@1
+                  displayName: "Downloading Artifacts..."
                   inputs:
                     buildType: "current"
                     artifactName: "manifests"
                     targetPath: "$(System.ArtifactsDirectory)/Manifests"
 
-                - task: Kubernetes@1
+                - task: Kubernetes@1s
                   displayName: "Deploying Cluster..."
                   inputs:
                     connectionType: Kubernetes Service Connection
                     kubernetesServiceEndpoint: "$(kubernetesServiceConnection)"
                     command: apply
-                    arguments: -f $(kubernetesManifest)
+                    arguments: -f $(System.ArtifactsDirectory)/$(kubernetesManifest)
