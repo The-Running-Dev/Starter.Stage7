@@ -64,7 +64,7 @@ steps:
 - task: Docker@2
   displayName: 'Building API Container...'
   inputs:
-    repository: 'astracontainerregistry.azurecr.io/$(apiDockerTag)'
+    repository: '$(containerRegistry)/$(apiDockerTag)'
     command: build
     dockerfile: '$(apiProject)/Dockerfile'
     buildContext: '$(apiProjectContext)'
@@ -72,7 +72,7 @@ steps:
 - task: Docker@2
   displayName: 'Building Consumer Container...'
   inputs:
-    repository: 'astracontainerregistry.azurecr.io/$(consumerDockerTag)'
+    repository: '$(containerRegistry)/$(consumerDockerTag)'
     command: build
     dockerfile: '$(consumerProject)/Dockerfile'
     buildContext: '$(consumerProjectContext)'
@@ -82,7 +82,7 @@ steps:
   inputs:
     containerRegistry: '$(containerRegistryServiceConnection)'
     command: push
-    repository: '$(containerRegistry)/$(apiDockerTag)'
+    repository: '$(apiDockerImage)'
     tags: |
       latest
 
@@ -91,6 +91,6 @@ steps:
   inputs:
     containerRegistry: '$(containerRegistryServiceConnection)'
     command: push
-    repository: '$(containerRegistry)/$(consumerDockerTag)'
+    repository: '$(consumerDockerImage)'
     tags: |
       latest
