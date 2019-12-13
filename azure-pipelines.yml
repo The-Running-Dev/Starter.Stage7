@@ -124,9 +124,9 @@ stages:
         deploy:
           steps:
           - task: Kubernetes@1
-          displayName: 'Deploying Cluster...'
-          inputs:
-            connectionType: Kubernetes Service Connection
-            kubernetesServiceEndpoint: '$(kubernetesServiceConnection)'
-            command: apply
-            arguments: -f kubernetes-cluster.yml
+            displayName: 'Deploying Cluster...'
+            inputs:
+              connectionType: Kubernetes Service Connection
+              kubernetesServiceEndpoint: '$(kubernetesServiceConnection)'
+              command: apply
+              arguments: -f kubernetes-cluster.yml
