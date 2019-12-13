@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  starter.api:
+    container_name: ${api_container_name}
+    image: ${api_image}:latest
+    ports:
+      - 8080:80
+      - 8443:443
+
+  starter.consumer:
+    container_name: ${consumer_container_name}
+    image: ${consumer_image}:latest

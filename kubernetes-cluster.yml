@@ -1,0 +1,50 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: starter-consumer
+  labels:
+    name: starter-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: starter-consumer
+  template:
+    metadata:
+      labels:
+        app: starter-consumer
+    spec:
+      containers:
+        - name: starter-consumer
+          image: astracontainerregistry.azurecr.io/boyankostadinov-starter.consumer:latest
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: starter-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: starter-api
+  template:
+    metadata:
+      labels:
+        app: starter-api
+    spec:
+      containers:
+        - name: starter-api
+          image: astracontainerregistry.azurecr.io/boyankostadinov-starter.api:latest
+          ports:
+          - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: starter-api
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+  selector:
+    app: starter-api
