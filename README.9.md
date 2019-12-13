@@ -11,10 +11,16 @@
 
 ### Tasks
 
-- Azure Kubernetes Service: Setup an AKS in Azure.
-- Azure Container Registry: Build your Docker image with Azure Devops and publish it to our existing Azure Container Registry
-- Kubernetes Deployment: Deploy your image to AKS as an Deployment with one pod using Azure Devops and Kubectl.
-- You will need to create Access policies in order to setup AKS and here how to do it:
+- Create Access policies in order to setup AKS:
  - 1. Go to Resource groups in Azure portal and choose "dev-astra-global" => dev-astra-vault-pri => Access policies
  - 2. Add access policy as you see in the image below. make sure to select Get and List for Secret permissions
- - 3. Go to Secrets and get the client and secret key
+ - 3. Go to Secrets and get the values for ServicePrincipalApplicationId and ServicePrincipalSecret
+
+- Azure Kubernetes Service:
+ - 1. Use an existing Service Principal
+    - Client Id of ServicePrincipalApplicationId
+    - Client Secret of ServicePrincipalSecret
+
+- Azure Container Registry: Build your Docker image with Azure DevOps and publish it to our existing Azure Container Registry
+
+- Kubernetes Deployment: Deploy your image to AKS as an Deployment with one pod using Azure DevOps and kubectl.
