@@ -65,9 +65,10 @@ steps:
     buildContext: '$(apiProjectContext)'
 
 - task: Docker@0
-  displayName: 'Push an image'
+  displayName: 'Pushing API Image...'
   inputs:
     containerregistrytype: 'Azure Container Registry'
     azureSubscription: 'Azure_Dev_Subscription'
     azureContainerRegistry: '{"loginServer":"astracontainerregistry.azurecr.io", "id" : "/subscriptions/e1c5afc5-9085-48e6-b242-e93aeac67b3a/resourceGroups/astra-container-registry/providers/Microsoft.ContainerRegistry/registries/astracontainerregistry"}'
+    action: 'Push an image'
     imageName: '$(apiDockerImage)'
