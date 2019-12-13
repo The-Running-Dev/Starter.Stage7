@@ -9,16 +9,23 @@ variables:
   buildConfiguration: 'Release'
   testProjects: '**/*.Tests/*.csproj'
   testBuildConfiguration: 'Test'
+
   imageTag: '$(build.buildId)'
+
   apiProject: 'Starter.API'
   apiDockerTag: 'boyankostadinov-starter.api'
   apiDockerImage: '$(apiDockerTag):$(imageTag)'
   apiProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(apiProject)'
+
   consumerProject: 'Starter.MessageConsumer.Console'
   consumerDockerTag: 'boyankostadinov-starter.messageconsumer.console'
   consumerDockerImage: '$(consumerDockerTag):$(imageTag)'
   consumerProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(consumerProject)'
+
   containerRegistryServiceConnection: ''
+
+  azureSubscription: 'Azure_Dev_Subscription'
+  azureContainerRegistry: '{"loginServer":"astracontainerregistry.azurecr.io", "id" : "/subscriptions/e1c5afc5-9085-48e6-b242-e93aeac67b3a/resourceGroups/astra-container-registry/providers/Microsoft.ContainerRegistry/registries/astracontainerregistry"}'
 
 steps:
 
@@ -64,11 +71,28 @@ steps:
     dockerfile: '$(apiProject)/Dockerfile'
     buildContext: '$(apiProjectContext)'
 
+- task: Docker@2
+  displayName: 'Building Consumer Container...'
+  inputs:
+    repository: 'astracontainerregistry.azurecr.io/$(consumerDockerTag)'
+    command: build
+    dockerfile: '$(consumerProject)/Dockerfile'
+    buildContext: '$(consumerProjectContext)'
+
 - task: Docker@0
   displayName: 'Pushing API Image...'
   inputs:
     containerregistrytype: 'Azure Container Registry'
-    azureSubscription: 'Azure_Dev_Subscription'
-    azureContainerRegistry: '{"loginServer":"astracontainerregistry.azurecr.io", "id" : "/subscriptions/e1c5afc5-9085-48e6-b242-e93aeac67b3a/resourceGroups/astra-container-registry/providers/Microsoft.ContainerRegistry/registries/astracontainerregistry"}'
+    azureSubscription: '$(azureSubscription)'
+    azureContainerRegistry: '$(azureContainerRegistry)'
     action: 'Push an image'
     imageName: '$(apiDockerImage)'
+
+- task: Docker@0
+  displayName: 'Pushing Consumer Image...'
+  inputs:
+    containerregistrytype: 'Azure Container Registry'
+    azureSubscription: '$(azureSubscription)'
+    azureContainerRegistry: '$(azureContainerRegistry)'
+    action: 'Push an image'
+    imageName: '$(consumerDockerImage)'
