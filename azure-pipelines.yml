@@ -57,7 +57,6 @@ steps:
     command: publish
     projects: '**/$(consumerProject)/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(consumerProjectContext)'
-    publishWebProjects: true
     zipAfterPublish: false
     modifyOutputPath: false
 
