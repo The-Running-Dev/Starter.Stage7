@@ -3,19 +3,23 @@ param(
 	[switch] $FromAzure = $false
 )
 
+$projectDir = Split-Path $PSScriptRoot -Parent
+$manifestsDir = Join-Path $projectDir 'Manifests' -Resolve
 $command = 'docker-compose'
 $environment = @{$true = 'azure'; $false = 'local';}[$fromAzure -eq $true]
 $environmentVariablesFile = "docker-compose.env.$environment"
 
 $fileSwitch = '-f'
-$composeFile = (Join-Path $PSScriptRoot 'docker-compose.yml' -Resolve)
+$recreateSwitch = '--force-recreate'
+$services = 'starter.api'
+$composeFile = Join-Path $manifestsDir 'docker-compose.yml' -Resolve
 $upArgument = 'up'
 $detachArgument = @{$true = '-d'; $false = '';}[$asDaemon -eq $true]
 $arguments = @($fileSwitch, $composeFile, $upArgument, $detachArgument)
 $dockerImages = @()
 
 # Read the contents of the appropriate environment file, ignoring empty lines
-Get-Content (Join-Path $PSScriptRoot $environmentVariablesFile) | `
+Get-Content (Join-Path $manifestsDir $environmentVariablesFile) | `
 	Where-Object { $_.Trim() -ne '' } | ForEach-Object {
 	# Get the variable and its value by splitting on the plus
 	$variable = $_ -Split '=' | Select-Object -First 1
