@@ -18,7 +18,7 @@ variables:
   consumerDockerTag: 'boyankostadinov-starter.messageconsumer.console'
   consumerDockerImage: '$(consumerDockerTag):$(imageTag)'
   consumerProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(consumerProject)'
-  serviceConnection: 'freecrhussazuredevops'
+  containerRegistryServiceConnection: ''
 
 steps:
 
@@ -49,7 +49,7 @@ steps:
     arguments: '--configuration $(BuildConfiguration) --output $(apiProjectContext)'
 
 - task: DotNetCoreCLI@2
-  displayName: 'Publishing Message Consumer...'
+  displayName: 'Publishing Consumer...'
   inputs:
     command: publish
     projects: '**/$(consumerProject)/*.csproj'
@@ -64,30 +64,10 @@ steps:
     dockerfile: '$(apiProject)/Dockerfile'
     buildContext: '$(apiProjectContext)'
 
-- task: Docker@2
-  displayName: 'Building Consumer Container...'
+- task: Docker@0
+  displayName: 'Push an image'
   inputs:
-    repository: 'astracontainerregistry.azurecr.io/$(consumerDockerTag)'
-    command: build
-    dockerfile: '$(consumerProject)/Dockerfile'
-    buildContext: '$(consumerProjectContext)'
-
-- task: Docker@2
-  displayName: 'Pushing API Image...'
-  inputs:
-    containerRegistry: '$(serviceConnection)'
-    command: push
-    repository: 'astracontainerregistry.azurecr.io/$(apiDockerTag)'
-    tags: |
-      $(imageTag)
-      latest
- 
-- task: Docker@2
-  displayName: 'Pushing Consumer Image...'
-  inputs:
-    containerRegistry: '$(serviceConnection)'
-    command: push
-    repository: 'astracontainerregistry.azurecr.io/$(consumerDockerTag)'
-    tags: |
-      $(imageTag)
-      latest
+    containerregistrytype: 'Azure Container Registry'
+    azureSubscription: 'Azure_Dev_Subscription'
+    azureContainerRegistry: '{"loginServer":"astracontainerregistry.azurecr.io", "id" : "/subscriptions/e1c5afc5-9085-48e6-b242-e93aeac67b3a/resourceGroups/astra-container-registry/providers/Microsoft.ContainerRegistry/registries/astracontainerregistry"}'
+    imageName: '$(apiDockerImage)'
