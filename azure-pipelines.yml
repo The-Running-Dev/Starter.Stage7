@@ -10,16 +10,14 @@ variables:
   testProjects: '**/*.Tests/*.csproj'
   testBuildConfiguration: 'Test'
 
-  imageTag: '$(build.buildId)'
+  buildIdTag: '$(build.buildId)'
 
   apiProject: 'Starter.API'
-  apiDockerTag: 'boyankostadinov-starter.api'
-  apiDockerImage: '$(apiDockerTag):$(imageTag)'
+  apiDockerImage: 'boyankostadinov-starter.api'
   apiProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(apiProject)'
 
   consumerProject: 'Starter.MessageConsumer.Console'
-  consumerDockerTag: 'boyankostadinov-starter.consumer'
-  consumerDockerImage: '$(consumerDockerTag):$(imageTag)'
+  consumerDockerImage: 'boyankostadinov-starter.consumer'
   consumerProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(consumerProject)'
 
   containerRegistry: 'astracontainerregistry.azurecr.io'
@@ -64,7 +62,8 @@ steps:
 - task: Docker@2
   displayName: 'Building API Container...'
   inputs:
-    repository: '$(containerRegistry)/$(apiDockerTag)'
+    containerRegistry: '$(containerRegistryServiceConnection)'
+    repository: '$(apiDockerImage)'
     command: build
     dockerfile: '$(apiProject)/Dockerfile'
     buildContext: '$(apiProjectContext)'
@@ -72,7 +71,8 @@ steps:
 - task: Docker@2
   displayName: 'Building Consumer Container...'
   inputs:
-    repository: '$(containerRegistry)/$(consumerDockerTag)'
+    containerRegistry: '$(containerRegistryServiceConnection)'
+    repository: '$(consumerDockerImage)'
     command: build
     dockerfile: '$(consumerProject)/Dockerfile'
     buildContext: '$(consumerProjectContext)'
@@ -80,13 +80,19 @@ steps:
 - task: Docker@2
   displayName: 'Pushing API Image...'
   inputs:
-    repository: '$(containerRegistry)/$(apiDockerTag)'
     containerRegistry: '$(containerRegistryServiceConnection)'
+    repository: '$(apiDockerImage)'
     command: push
+    tags: |
+      latest
+      $(buildIdTag)
 
 - task: Docker@2
   displayName: 'Pushing Consumer Image...'
   inputs:
-    repository: '$(containerRegistry)/$(consumerDockerTag)'
     containerRegistry: '$(containerRegistryServiceConnection)'
+    repository: '$(consumerDockerImage)'
     command: push
+    tags: |
+      latest
+      $(buildIdTag)
