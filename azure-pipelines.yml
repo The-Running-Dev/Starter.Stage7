@@ -134,7 +134,6 @@ stages:
             deploy:
               steps:
                 - task: DownloadPipelineArtifact@1
-                  displayName: "Downloading Artifacts..."
                   inputs:
                     buildType: "current"
                     artifactName: "manifests"
@@ -146,4 +145,4 @@ stages:
                     connectionType: Kubernetes Service Connection
                     kubernetesServiceEndpoint: "$(kubernetesServiceConnection)"
                     command: apply
-                    arguments: -f $(System.ArtifactsDirectory)/$(kubernetesManifest)
+                    arguments: -f $(System.ArtifactsDirectory)/manifests/$(kubernetesManifest)
