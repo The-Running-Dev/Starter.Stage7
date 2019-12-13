@@ -134,12 +134,13 @@ stages:
             deploy:
               steps:
                 - task: DownloadPipelineArtifact@1
+                  displayName: "Downloading Artifacts..."
                   inputs:
                     buildType: "current"
                     artifactName: "manifests"
-                    targetPath: "$(System.ArtifactsDirectory)/Manifests"
+                    targetPath: "$(System.ArtifactsDirectory)/manifests"
 
-                - task: Kubernetes@1s
+                - task: Kubernetes@1
                   displayName: "Deploying Cluster..."
                   inputs:
                     connectionType: Kubernetes Service Connection
