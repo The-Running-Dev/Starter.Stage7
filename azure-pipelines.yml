@@ -87,6 +87,9 @@ steps:
     containerRegistry: '$(containerRegistryServiceConnection)'
     repository: '$(apiDockerImage)'
     command: push
+    tags: |
+      $(Build.BuildId)
+      latest
 
 - task: Docker@2
   displayName: 'Pushing Consumer Image...'
@@ -94,3 +97,6 @@ steps:
     containerRegistry: '$(containerRegistryServiceConnection)'
     repository: '$(consumerDockerImage)'
     command: push
+    tags: |
+      $(Build.BuildId)
+      latest
