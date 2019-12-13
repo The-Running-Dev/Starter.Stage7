@@ -21,6 +21,8 @@ variables:
   containerRegistry: 'astracontainerregistry.azurecr.io'
   containerRegistryServiceConnection: 'astra_container_registry'
 
+  manifestsDirectory: 'Starter.Build'
+  kubernetesManifests: 'kubernetes-cluster.yml'
   kubernetesServiceConnection: 'dev-atra-boyankostadinov-kubernetes'
   kubernetesEnvironment: 'dev-astra-boyankostadinov-starter-aksnamespace'
 
@@ -112,6 +114,12 @@ stages:
           $(Build.BuildId)
           latest
 
+    - task: PublishPipelineArtifact@0
+      displayName: 'Publishing Manifests...'
+      inputs:
+        artifactName: 'manifests'
+        targetPath: '$(manifestsDirectory)'
+
 - stage: Deploy
   displayName: Deploy Stage
   dependsOn: Build
@@ -125,10 +133,16 @@ stages:
       runOnce:
         deploy:
           steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: 'Downloading Manifests...'
+            inputs:
+              artifactName: 'manifests'
+              downloadPath: '$(System.ArtifactsDirectory)'
+
           - task: Kubernetes@1
             displayName: 'Deploying Cluster...'
             inputs:
               connectionType: Kubernetes Service Connection
               kubernetesServiceEndpoint: '$(kubernetesServiceConnection)'
               command: apply
-              arguments: -f kubernetes-cluster.yml
+              arguments: -f '$(System.ArtifactsDirectory)/$(kubernetesManifests)'
