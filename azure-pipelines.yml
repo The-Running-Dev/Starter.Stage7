@@ -10,8 +10,6 @@ variables:
   testProjects: '**/*.Tests/*.csproj'
   testBuildConfiguration: 'Test'
 
-  buildIdTag: '$(build.buildId)'
-
   apiProject: 'Starter.API'
   apiDockerImage: 'boyankostadinov-starter.api'
   apiProjectContext: '$(Build.Repository.LocalPath)/Artifacts/$(apiProject)'
@@ -67,6 +65,9 @@ steps:
     command: build
     dockerfile: '$(apiProject)/Dockerfile'
     buildContext: '$(apiProjectContext)'
+    tags: |
+      $(Build.BuildId)
+      latest
 
 - task: Docker@2
   displayName: 'Building Consumer Container...'
@@ -76,6 +77,9 @@ steps:
     command: build
     dockerfile: '$(consumerProject)/Dockerfile'
     buildContext: '$(consumerProjectContext)'
+    tags: |
+      $(Build.BuildId)
+      latest
 
 - task: Docker@2
   displayName: 'Pushing API Image...'
@@ -83,9 +87,6 @@ steps:
     containerRegistry: '$(containerRegistryServiceConnection)'
     repository: '$(apiDockerImage)'
     command: push
-    tags: |
-      latest
-      $(buildIdTag)
 
 - task: Docker@2
   displayName: 'Pushing Consumer Image...'
@@ -93,6 +94,3 @@ steps:
     containerRegistry: '$(containerRegistryServiceConnection)'
     repository: '$(consumerDockerImage)'
     command: push
-    tags: |
-      latest
-      $(buildIdTag)
