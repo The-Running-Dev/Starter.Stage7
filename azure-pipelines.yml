@@ -84,7 +84,6 @@ steps:
     command: push
     repository: '$(containerRegistry)/$(apiDockerTag)'
     tags: |
-      $(imageTag)
       latest
 
 - task: Docker@2
@@ -94,5 +93,4 @@ steps:
     command: push
     repository: '$(containerRegistry)/$(consumerDockerTag)'
     tags: |
-      $(imageTag)
       latest
