@@ -22,6 +22,7 @@ variables:
   containerRegistryServiceConnection: 'astra_container_registry'
 
   kubernetesServiceConnection: 'dev-atra-boyankostadinov-kubernetes'
+  kubernetesEnvironment: 'dev-astra-boyankostadinov-starter-aksnamespace'
 
 stages:
 - stage: Build
@@ -119,6 +120,7 @@ stages:
   - deployment: Deploy
     condition: succeeded()
     displayName: Deploy
+    environment: '$(kubernetesEnvironment)'
     strategy:
       runOnce:
         deploy:
