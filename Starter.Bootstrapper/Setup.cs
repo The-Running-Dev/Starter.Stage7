@@ -3,16 +3,15 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 
+using Starter.Broker.Azure;
+using Starter.Data.Entities;
 using Starter.Data.Services;
 using Starter.Data.Consumers;
-using Starter.Data.Entities;
 using Starter.Data.ViewModels;
 using Starter.Data.Repositories;
-
+using Starter.Framework.Loggers;
 using Starter.Framework.Clients;
 using Starter.Framework.Entities;
-using Starter.Framework.Loggers;
-using Starter.MessageBroker.Azure;
 using Starter.Repository.Repositories;
 
 namespace Starter.Bootstrapper
