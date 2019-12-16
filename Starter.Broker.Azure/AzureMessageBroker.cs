@@ -9,7 +9,7 @@ using Starter.Data.Services;
 using Starter.Framework.Entities;
 using Starter.Framework.Extensions;
 
-namespace Starter.MessageBroker.Azure
+namespace Starter.Broker.Azure
 {
     /// <summary>
     /// Implements IMessageBroker in Azure Service Bus
