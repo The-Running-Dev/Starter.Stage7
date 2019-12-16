@@ -19,6 +19,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.Azure.Populate", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.Bootstrapper", "Starter.Bootstrapper\Starter.Bootstrapper.csproj", "{20AD64A0-6DA4-4D80-A5DB-3B031F746B9D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.Broker.Azure", "Starter.Broker.Azure\Starter.Broker.Azure.csproj", "{B59E2083-04A7-4109-805F-ED5CB4179F90}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.Build", "Starter.Build\Starter.Build.csproj", "{D4D70530-B6D4-4EC4-B104-A549DE58262E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.Consumer", "Starter.Consumer\Starter.Consumer.csproj", "{43DF99E4-E071-4068-9D2D-E19D5A4CEE99}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.Consumer.Azure", "Starter.Consumer.Azure\Starter.Consumer.Azure.csproj", "{71291756-5A50-44E4-B6DF-9E355C727C58}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.Data", "Starter.Data\Starter.Data.csproj", "{00F17882-A692-4A51-8B21-75D0ABDF633C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.Data.Tests", "Starter.Data.Tests\Starter.Data.Tests.csproj", "{BAC266A5-5F3C-45D1-8AE4-69847D6D67FD}"
@@ -31,15 +39,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.Repository", "Start
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.Repository.Tests", "Starter.Repository.Tests\Starter.Repository.Tests.csproj", "{91B9A84B-385A-4714-AC39-F297B1D0A361}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.MessageBroker.Azure", "Starter.MessageBroker.Azure\Starter.MessageBroker.Azure.csproj", "{B59E2083-04A7-4109-805F-ED5CB4179F90}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.MessageConsumer.Azure", "Starter.MessageConsumer.Azure\Starter.MessageConsumer.Azure.csproj", "{71291756-5A50-44E4-B6DF-9E355C727C58}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.MessageConsumer.Console", "Starter.MessageConsumer.Console\Starter.MessageConsumer.Console.csproj", "{43DF99E4-E071-4068-9D2D-E19D5A4CEE99}"
-EndProject
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "Starter.Resources.Azure", "Starter.Resources.Azure\Starter.Resources.Azure.deployproj", "{52EBCBAA-E3CA-44A4-82E6-392457621D88}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.Build", "Starter.Build\Starter.Build.csproj", "{D4D70530-B6D4-4EC4-B104-A549DE58262E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

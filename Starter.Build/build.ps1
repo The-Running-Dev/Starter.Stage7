@@ -2,26 +2,26 @@ param(
 	[switch] $DockerOnly = $false
 )
 
-$BuildDirectory = (Split-Path $PSScriptRoot -Parent)
-$BuildArtifactStagingDirectory = (Join-Path $BuildDirectory 'Artifacts')
-$BuildConfiguration = 'Release'
+$buildDirectory = (Split-Path $PSScriptRoot -Parent)
+$buildArtifactStagingDirectory = (Join-Path $BuildDirectory 'Artifacts')
+$buildConfiguration = 'Release'
 
 $apiProject = 'Starter.API'
 $apiProjectFile = Join-Path (Join-Path $BuildDirectory $apiProject) "$apiProject.csproj"
 $apiProjectArtifacts = Join-Path $BuildArtifactStagingDirectory $apiProject
 
-$messageConsumerProject = 'Starter.MessageConsumer.Console'
-$messageConsumerProjectFile = Join-Path (Join-Path $BuildDirectory $messageConsumerProject) "$messageConsumerProject.csproj"
-$messageConsumerProjectArtifacts = Join-Path $BuildArtifactStagingDirectory $messageConsumerProject
+$consumerProject = 'Starter.Consumer'
+$consumerProjectFile = Join-Path (Join-Path $buildDirectory $consumerProject) "$consumerProject.csproj"
+$consumerProjectArtifacts = Join-Path $BuildArtifactStagingDirectory $consumerProject
 
 $vsLabel = "com.microsoft.created-by=visual-studio"
 $projectLabel = "com.microsoft.visual-studio.project-name=`$projectName"
 
 if (-not $DockerOnly) {
-	Write-Output 'Converting to Bits...'
+	Write-Output 'Building...'
 	& dotnet build
 
-	Write-Output 'Common, Common, Pass Already...'
+	Write-Output 'Running Tests...'
 	& dotnet test
 
 	Write-Output 'Publishing API...'
@@ -29,10 +29,10 @@ if (-not $DockerOnly) {
 		--configuration $BuildConfiguration `
 		--output $apiProjectArtifacts
 
-	Write-Output 'Publishing Message Consumer...'
-	& dotnet publish $messageConsumerProjectFile `
+	Write-Output 'Publishing Consumer...'
+	& dotnet publish $consumerProjectFile `
 		--configuration $BuildConfiguration `
-		--output $messageConsumerProjectArtifacts
+		--output $consumerProjectArtifacts
 }
 
 Get-ChildItem -Recurs -File Dockerfile | ForEach-Object {
