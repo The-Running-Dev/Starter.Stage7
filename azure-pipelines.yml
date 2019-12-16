@@ -14,7 +14,7 @@ variables:
   apiDockerImage: "boyankostadinov-starter.api"
   apiProjectContext: "$(Build.Repository.LocalPath)/Artifacts/$(apiProject)"
 
-  consumerProject: "Starter.MessageConsumer.Console"
+  consumerProject: "Starter.Consumer"
   consumerDockerImage: "boyankostadinov-starter.consumer"
   consumerProjectContext: "$(Build.Repository.LocalPath)/Artifacts/$(consumerProject)"
 
