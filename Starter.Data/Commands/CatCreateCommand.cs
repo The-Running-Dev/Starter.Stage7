@@ -1,10 +1,11 @@
-﻿using Starter.Framework.Clients;
-
-namespace Starter.Data.Commands
+﻿namespace Starter.Data.Commands
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class CatCreateCommand : CatCommand
     {
-        public CatCreateCommand(IApiClient apiClient) : base(apiClient)
+        public CatCreateCommand() : base()
         {
         }
     }

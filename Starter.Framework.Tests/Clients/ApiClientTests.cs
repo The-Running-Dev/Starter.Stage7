@@ -1,64 +1,117 @@
 ﻿using System;
+using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
+using NUnit.Framework;
+using FluentAssertions;
+using Moq;
+using RestSharp;
+using Starter.Bootstrapper;
+using Starter.Configuration.Entities;
+using Starter.Data.Entities;
 using Starter.Framework.Clients;
 using Starter.Framework.Extensions;
 
 namespace Starter.Framework.Tests.Clients
 {
-    //public class ApiClientTests : IApiClient
-    //{
-        //public ApiClientTests(string apiUrl, string resourceUrl)
-        //{
-        //    _resourceUrl = resourceUrl;
-        //    _client = new RestClient(apiUrl);
-        //}
+    /// <summary>
+    /// Tests for the ApiClient class
+    /// </summary>
+    [TestFixture]
+    public class ApiClientTests: TestsBase
+    {
+        [Test]
+        public void ApiClient_NewInstance_Successful()
+        {
+        }
 
-        //public async Task<IEnumerable<T>> GetAllAsync<T>()
-        //{
-        //    var request = new RestRequest(_resourceUrl, Method.GET);
-        //    var cancellationTokenSource = new CancellationTokenSource();
+        [Test]
+        public async Task GetAll_Successful()
+        {
+            var cats = await ApiClient.GetAll<Cat>();
 
-        //    var restResponse =
-        //        await _client.ExecuteTaskAsync<IEnumerable<T>>(request, cancellationTokenSource.Token);
+            cats.Count().Should().Be(Cats.Count);
+        }
 
-        //    return restResponse.Data ?? new List<T>();
-        //}
+        [Test]
+        public async Task Create_Successful()
+        {
+            var mockRestClient = new Mock<IRestClient>();
+            var apiSettings = IocWrapper.Instance.GetService<IApiSettings>();
 
-        //public async Task CreateAsync<T>(T entity)
-        //{
-        //    await SendEntity(entity, Method.POST);
-        //}
+            mockRestClient.Setup(x => x.ExecuteTaskAsync(It.Is<RestRequest>((r) => r.Method == Method.POST), It.IsAny<CancellationToken>())).Returns((RestRequest r, CancellationToken token) =>
+            {
+                var response = new Mock<IRestResponse>();
+                response.Setup(_ => _.StatusCode).Returns(HttpStatusCode.OK);
 
-        //public async Task UpdateAsync<T>(T entity)
-        //{
-        //    await SendEntity(entity, Method.PUT);
-        //}
+                Cats.Add(r.Parameters[0].Value.ToString().FromJson<Cat>());
 
-        //public async Task DeleteAsync(Guid id)
-        //{
-        //    var request = new RestRequest(_resourceUrl, Method.DELETE);
-        //    var cancellationTokenSource = new CancellationTokenSource();
+                return Task.FromResult(response.Object);
+            });
 
-        //    request.AddParameter(nameof(id), id);
+            var cat = new Cat { Id = Guid.NewGuid(), Name = Guid.NewGuid().ToString() };
+            var apiClient = new ApiClient(mockRestClient.Object, apiSettings);
+            await apiClient.Create(cat);
 
-        //    await _client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
-        //}
+            Cats.FirstOrDefault(x => x.Id == cat.Id).Should().BeEquivalentTo(cat);
+        }
 
-        //private async Task SendEntity<T>(T entity, Method method)
-        //{
-        //    var request = new RestRequest(_resourceUrl, method);
-        //    var cancellationTokenSource = new CancellationTokenSource();
+        [Test]
+        public async Task Update_Successful()
+        {
+            var mockRestClient = new Mock<IRestClient>();
+            var apiSettings = IocWrapper.Instance.GetService<IApiSettings>();
 
-        //    request.AddJsonBody(((object)entity).ToJson());
+            mockRestClient.Setup(x => x.ExecuteTaskAsync(It.Is<RestRequest>((r) => r.Method == Method.PUT), It.IsAny<CancellationToken>())).Returns((RestRequest r, CancellationToken token) =>
+            {
+                var response = new Mock<IRestResponse>();
+                response.Setup(_ => _.StatusCode).Returns(HttpStatusCode.OK);
 
-        //    await _client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
-        //}
+                var c = r.Parameters[0].Value.ToString().FromJson<Cat>();
+                var existing = Cats.Find(x => x.Id == c.Id);
 
-        //private readonly string _resourceUrl;
+                Cats.Remove(existing);
+                Cats.Add(c);
 
-        //private readonly RestClient _client;
-    //}
+                return Task.FromResult(response.Object);
+            });
+
+            var cat = Cats.FirstOrDefault();
+            var newName = Guid.NewGuid().ToString();
+
+            cat.Name = newName;
+
+            var apiClient = new ApiClient(mockRestClient.Object, apiSettings);
+            await apiClient.Update(cat);
+
+            Cats.FirstOrDefault(x => x.Name == newName).Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task Delete_Successful()
+        {
+            var mockRestClient = new Mock<IRestClient>();
+            var apiSettings = IocWrapper.Instance.GetService<IApiSettings>();
+
+            mockRestClient.Setup(x => x.ExecuteTaskAsync(It.Is<RestRequest>((r) => r.Method == Method.DELETE), It.IsAny<CancellationToken>())).Returns((RestRequest r, CancellationToken token) =>
+            {
+                var response = new Mock<IRestResponse>();
+                response.Setup(_ => _.StatusCode).Returns(HttpStatusCode.OK);
+
+                var id = Guid.Parse(r.Parameters[0].Value.ToString());
+                Cats.Remove(Cats.FirstOrDefault(x => x.Id == id));
+
+                return Task.FromResult(response.Object);
+            });
+
+            var cat = Cats.FirstOrDefault();
+
+            var apiClient = new ApiClient(mockRestClient.Object, apiSettings);
+            await apiClient.Delete(cat.Id);
+
+            Cats.FirstOrDefault(x => x.Id == cat.Id).Should().BeNull();
+        }
+    }
 }

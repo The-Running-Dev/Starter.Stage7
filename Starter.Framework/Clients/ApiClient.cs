@@ -4,23 +4,28 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using RestSharp;
-
-using Starter.Framework.Extensions;
 using Starter.Configuration.Entities;
+using Starter.Framework.Extensions;
 
 namespace Starter.Framework.Clients
 {
     public class ApiClient : IApiClient
     {
-        public ApiClient(ISettings settings)
+        private readonly IApiSettings _settings;
+
+        private readonly IRestClient _client;
+
+        public ApiClient(IRestClient restClient, IApiSettings settings)
         {
-            _resourceUrl = settings.ResourceUrl;
-            _client = new RestClient(settings.ApiUrl);
+            _client = restClient;
+            _settings = settings;
+
+            _client.BaseUrl = new Uri(settings.Url);
         }
 
         public async Task<IEnumerable<T>> GetAll<T>()
         {
-            var request = new RestRequest(_resourceUrl, Method.GET);
+            var request = new RestRequest(_settings.Resource, Method.GET);
             var cancellationTokenSource = new CancellationTokenSource();
 
             var restResponse =
@@ -31,7 +36,7 @@ namespace Starter.Framework.Clients
 
         public async Task<T> GetById<T>(Guid id)
         {
-            var request = new RestRequest($"{_resourceUrl}/{id}", Method.GET);
+            var request = new RestRequest($"{_settings.Resource}/{id}", Method.GET);
 
             var cancellationTokenSource = new CancellationTokenSource();
 
@@ -53,7 +58,7 @@ namespace Starter.Framework.Clients
 
         public async Task Delete(Guid id)
         {
-            var request = new RestRequest(_resourceUrl, Method.DELETE);
+            var request = new RestRequest(_settings.Resource, Method.DELETE);
             var cancellationTokenSource = new CancellationTokenSource();
 
             request.AddParameter(nameof(id), id);
@@ -63,16 +68,12 @@ namespace Starter.Framework.Clients
 
         private async Task SendEntity<T>(T entity, Method method)
         {
-            var request = new RestRequest(_resourceUrl, method);
+            var request = new RestRequest(_settings.Resource, method);
             var cancellationTokenSource = new CancellationTokenSource();
 
             request.AddJsonBody(((object)entity).ToJson());
 
             await _client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
         }
-
-        private readonly string _resourceUrl;
-
-        private readonly RestClient _client;
     }
 }

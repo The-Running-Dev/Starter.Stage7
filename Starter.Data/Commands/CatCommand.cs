@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Windows.Input;
-using Starter.Framework.Clients;
 
 namespace Starter.Data.Commands
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class CatCommand : ICommand
     {
         private readonly Action _execute;
 
         private readonly Predicate<object> _canExecute;
 
-        protected IApiClient ApiClient { get; set; }
-
-        public CatCommand(IApiClient apiClient)
+        public CatCommand()
         {
-            ApiClient = apiClient;
         }
 
         private event EventHandler CanExecuteChangedInternal;

@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
+using RestSharp;
 using Starter.Broker.Azure;
 using Starter.Data.Entities;
 using Starter.Data.Services;
@@ -43,11 +42,12 @@ namespace Starter.Bootstrapper
                 services = new ServiceCollection();
             }
 
-            // Create a new instance of the configuraiton service using the setup type
+            // Create a new instance of the configuration service using the setup type
             var configService = new ConfigurationService(setupType.GetDescription());
 
             services.AddSingleton<IConfigurationService>(x => configService);
             services.AddSingleton<ISettings>(x => configService.Get<Settings>("Settings"));
+            services.AddSingleton<IApiSettings>(x => configService.Get<ApiSettings>("ApiSettings"));
 
             return services.BuildServiceProvider();
         }
@@ -70,7 +70,7 @@ namespace Starter.Bootstrapper
         {
             BootstrapConfig(services, setupType);
 
-            RegisterService(services);
+            RegisterServices(services);
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace Starter.Bootstrapper
             var provider = BootstrapConfig(configServices);
             var settings = provider.GetService<ISettings>();
             var configurationService = provider.GetService<IConfigurationService>();
-            
+
             return new HostBuilder()
                 .ConfigureLogging(logging =>
                 {
@@ -100,7 +100,7 @@ namespace Starter.Bootstrapper
                     services.AddSingleton<IConfigurationService>((x) => configurationService);
 
                     // Register the rest of the services
-                    RegisterService(services);
+                    RegisterServices(services);
                 });
         }
 
@@ -109,8 +109,9 @@ namespace Starter.Bootstrapper
         /// and creates a new instance of the IOC wrapper
         /// </summary>
         /// <param name="services"></param>
-        private static void RegisterService(IServiceCollection services)
+        private static void RegisterServices(IServiceCollection services)
         {
+            services.AddTransient<IRestClient, RestClient>();
             services.AddTransient<IApiClient, ApiClient>();
             services.AddTransient<ILogger, ApplicationInsightsLogger>();
 
@@ -118,7 +119,7 @@ namespace Starter.Bootstrapper
             services.AddTransient<IMessageBroker<Cat>, AzureMessageBroker<Cat>>();
             services.AddTransient<IMessageConsumer<Cat>, MessageConsumer<Cat>>();
             services.AddTransient<IMessageConsumerService, MessageConsumerService>();
-            
+
             services.AddTransient<ICatService, CatService>();
             services.AddTransient<IMainViewModel, MainViewModel>();
 
