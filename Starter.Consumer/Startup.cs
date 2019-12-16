@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace Starter.MessageConsumer.Console
+namespace Starter.Consumer
 {
     public class Startup
     {

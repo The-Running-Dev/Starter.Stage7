@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Starter.Bootstrapper;
 using Starter.Framework.Entities;
 
-namespace Starter.MessageConsumer.Console
+namespace Starter.Consumer
 {
     class Program
     {
