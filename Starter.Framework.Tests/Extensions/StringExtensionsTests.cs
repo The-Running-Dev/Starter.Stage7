@@ -29,13 +29,13 @@ namespace Starter.Framework.Tests.Extensions
         }
 
         [Test]
-        public void IsEqualTo_ForStringAndNull_Failure()
+        public void IsEqualTo_ForStringAndNull_Fails()
         {
             "Dan".IsEqualTo(null).Should().BeFalse();
         }
 
         [Test]
-        public void IsEmpty_ForNonEmptyString_Failure()
+        public void IsEmpty_ForNonEmptyString_Fails()
         {
             "Ben".IsEmpty().Should().BeFalse();
         }
