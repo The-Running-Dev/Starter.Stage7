@@ -1,10 +1,10 @@
 {
   "profiles": {
-    "Starter.MessageConsumer.Console": {
-      "commandName": "Project"
-    },
     "Docker": {
       "commandName": "Docker"
+    },
+    "Starter.Consumer": {
+      "commandName": "Project"
     }
   }
 }

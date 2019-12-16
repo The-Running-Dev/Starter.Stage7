@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Microsoft.Azure.Cosmos.Table;
 
-using Starter.Framework.Entities;
+using Starter.Configuration.Entities;
 
 namespace Starter.Repository.Repositories
 {
@@ -12,15 +12,13 @@ namespace Starter.Repository.Repositories
     /// </summary>
     public class Repository
     {
-        private readonly CloudStorageAccount _storageAccount;
-
         private readonly CloudTable _table;
 
         public Repository(ISettings settings, string tableName)
         {
-            _storageAccount = CloudStorageAccount.Parse(settings.StorageAccountConnection);
+            var storageAccount = CloudStorageAccount.Parse(settings.StorageAccountConnection);
+            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
 
-            var tableClient = _storageAccount.CreateCloudTableClient(new TableClientConfiguration());
             _table = tableClient.GetTableReference(tableName);
             _table.CreateIfNotExists();
         }

@@ -53,6 +53,7 @@ Tag: $projectTag
 	Write-Output "Building $projectName Container..."
 	& docker build -f $dockerFile `
 		--force-rm `
+		--rm -q `
 		-t $projectTag `
 		--label $vsLabel `
 		--label $projectLabel `

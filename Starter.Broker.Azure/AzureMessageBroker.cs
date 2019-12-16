@@ -6,8 +6,8 @@ using Microsoft.Azure.ServiceBus;
 
 using Starter.Data.Entities;
 using Starter.Data.Services;
-using Starter.Framework.Entities;
 using Starter.Framework.Extensions;
+using Starter.Configuration.Entities;
 
 namespace Starter.Broker.Azure
 {

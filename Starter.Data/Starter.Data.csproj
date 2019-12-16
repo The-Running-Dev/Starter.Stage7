@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.Cosmos.Table" Version="1.0.5" />
+    <PackageReference Include="Microsoft.Azure.Cosmos.Table" Version="1.0.6" />
     <PackageReference Include="microsoft.Extensions.Configuration.Abstractions" Version="2.2.0" />
     <PackageReference Include="microsoft.Extensions.Configuration.Binder" Version="2.2.4" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="2.2.0" />

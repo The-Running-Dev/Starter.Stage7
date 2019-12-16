@@ -7,8 +7,7 @@ using Microsoft.Azure.Cosmos.Table;
 
 using Starter.Data.Entities;
 using Starter.Data.Repositories;
-
-using Starter.Framework.Entities;
+using Starter.Configuration.Entities;
 
 namespace Starter.Repository.Repositories
 {

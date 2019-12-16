@@ -5,8 +5,8 @@ using System.Collections.Generic;
 
 using RestSharp;
 
-using Starter.Framework.Entities;
 using Starter.Framework.Extensions;
+using Starter.Configuration.Entities;
 
 namespace Starter.Framework.Clients
 {

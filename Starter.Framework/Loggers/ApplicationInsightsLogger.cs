@@ -7,7 +7,7 @@ using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 
-using Starter.Framework.Entities;
+using Starter.Configuration.Entities;
 
 namespace Starter.Framework.Loggers
 {

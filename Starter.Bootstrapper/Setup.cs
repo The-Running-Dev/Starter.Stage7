@@ -1,6 +1,6 @@
-﻿using System;
-
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using Starter.Broker.Azure;
@@ -11,7 +11,9 @@ using Starter.Data.ViewModels;
 using Starter.Data.Repositories;
 using Starter.Framework.Loggers;
 using Starter.Framework.Clients;
-using Starter.Framework.Entities;
+using Starter.Framework.Extensions;
+using Starter.Configuration.Entities;
+using Starter.Configuration.Services;
 using Starter.Repository.Repositories;
 
 namespace Starter.Bootstrapper
@@ -24,18 +26,11 @@ namespace Starter.Bootstrapper
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="services"></param>
         /// <param name="setupType"></param>
-        public static void Bootstrap(SetupType setupType = SetupType.Debug)
+        public static ServiceProvider BootstrapConfig(IServiceCollection services, SetupType setupType = SetupType.Debug)
         {
-            Bootstrap(new ServiceCollection(), setupType);
-        }
-
-        /// <summary>
-        /// Registers service implementations with the DI container,
-        /// based on the setup type
-        /// </summary>
-        public static void Bootstrap(IServiceCollection services, SetupType setupType = SetupType.Debug)
-        {
+            // Switch the setup type based on the compile time constant
 #if RELEASE
             if (setupType != SetupType.Test)
             {
@@ -48,24 +43,74 @@ namespace Starter.Bootstrapper
                 services = new ServiceCollection();
             }
 
-            switch (setupType)
-            {
-                case SetupType.Release:
-                    services.AddSingleton<ISettings, Settings>();
+            // Create a new instance of the configuraiton service using the setup type
+            var configService = new ConfigurationService(setupType.GetDescription());
 
-                    break;
-                case SetupType.Debug:
-                    services.AddSingleton<ISettings, SettingsDev>();
+            services.AddSingleton<IConfigurationService>(x => configService);
+            services.AddSingleton<ISettings>(x => configService.Get<Settings>("Settings"));
 
-                    break;
-                case SetupType.Test:
-                    services.AddSingleton<ISettings, SettingsTest>();
+            return services.BuildServiceProvider();
+        }
 
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(setupType), setupType, null);
-            }
+        /// <summary>
+        /// Registers the services with the DI container,
+        /// by using a new service collection
+        /// </summary>
+        /// <param name="setupType"></param>
+        public static void Bootstrap(SetupType setupType = SetupType.Debug)
+        {
+            Bootstrap(new ServiceCollection(), setupType);
+        }
 
+        /// <summary>
+        /// Registers services with the DI container,
+        /// based on the setup type
+        /// </summary>
+        public static void Bootstrap(IServiceCollection services, SetupType setupType = SetupType.Debug)
+        {
+            BootstrapConfig(services, setupType);
+
+            RegisterService(services);
+        }
+
+        /// <summary>
+        /// Creates a new host builder for running from the console
+        /// </summary>
+        /// <returns></returns>
+        public static IHostBuilder BootstrapHost()
+        {
+            var configServices = new ServiceCollection();
+
+            var provider = BootstrapConfig(configServices);
+            var settings = provider.GetService<ISettings>();
+            var configurationService = provider.GetService<IConfigurationService>();
+            
+            return new HostBuilder()
+                .ConfigureLogging(logging =>
+                {
+                    logging.AddConfiguration(configurationService.GetSection("Logging"));
+                    logging.AddConsole();
+                    logging.AddDebug();
+                    logging.AddApplicationInsights(settings.ApplicationInsightsInstrumentationKey);
+                })
+                .ConfigureServices((services) =>
+                {
+                    // Provide the existing instances of the settings and the configuration service
+                    services.AddSingleton<ISettings>((x) => settings);
+                    services.AddSingleton<IConfigurationService>((x) => configurationService);
+
+                    // Register the rest of the services
+                    RegisterService(services);
+                });
+        }
+
+        /// <summary>
+        /// Registers application services,
+        /// and creates a new instance of the IOC wrapper
+        /// </summary>
+        /// <param name="services"></param>
+        private static void RegisterService(IServiceCollection services)
+        {
             services.AddTransient<IApiClient, ApiClient>();
             services.AddTransient<ILogger, ApplicationInsightsLogger>();
 
@@ -73,13 +118,13 @@ namespace Starter.Bootstrapper
             services.AddTransient<IMessageBroker<Cat>, AzureMessageBroker<Cat>>();
             services.AddTransient<IMessageConsumer<Cat>, MessageConsumer<Cat>>();
             services.AddTransient<IMessageConsumerService, MessageConsumerService>();
+            
             services.AddTransient<ICatService, CatService>();
             services.AddTransient<IMainViewModel, MainViewModel>();
+
             services.AddHostedService<MessageConsumerService>();
 
-            var serviceProvider = services.BuildServiceProvider();
-
-            IocWrapper.Instance = new IocWrapper(serviceProvider);
+            IocWrapper.Instance = new IocWrapper(services.BuildServiceProvider());
         }
     }
 }
