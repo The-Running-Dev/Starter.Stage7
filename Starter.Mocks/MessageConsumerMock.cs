@@ -5,6 +5,10 @@ using Starter.Data.Entities;
 
 namespace Starter.Mocks
 {
+    /// <summary>
+    /// Creates and manages setup for a mocked Message consumer
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class MessageConsumerMock<T> where T: IEntity
     {
         private readonly Mock<IMessageConsumer<T>> _mockConsumer;

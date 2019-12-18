@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
@@ -21,14 +20,11 @@ namespace Starter.Data.Services
 
         private readonly ILogger _logger;
 
-        public MessageService(
-            IMessageBroker<T> broker,
-            IMessageConsumer<T> consumer,
-            ILogger logger)
+        public MessageService(IMessageBroker<T> broker, IMessageConsumer<T> consumer, ILoggerFactory loggerFactory)
         {
             _broker = broker;
             _consumer = consumer;
-            _logger = logger;
+            _logger = loggerFactory.CreateLogger(GetType().AssemblyQualifiedName);
 
             _broker.DataReceived += OnDataReceived;
         }
@@ -49,7 +45,7 @@ namespace Starter.Data.Services
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"{nameof(MessageService<T>)} Stopping...");
+            _logger.LogInformation($"Stopping {nameof(MessageService<T>)}...");
 
             _broker = null;
             _consumer = null;

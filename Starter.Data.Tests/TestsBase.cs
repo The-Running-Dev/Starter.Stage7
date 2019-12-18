@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using Microsoft.Extensions.Logging;
 
 using Starter.Mocks;
 using Starter.Bootstrapper;
@@ -17,25 +16,23 @@ namespace Starter.Data.Tests
     {
         protected ApiClientMock ApiClientMock { get; set; }
 
-        protected ICatService CatService { get; private set; }
-
         protected CatServiceMock CatServiceMock { get; private set; }
 
-        protected QueueClientMock QueueClientMock { get; private set; }
-
+        protected ICatService CatService { get; private set; }
+        
         protected IMessageConsumer<Cat> MessageConsumer { get; private set; }
 
         protected MessageConsumerMock<Cat> MessageConsumerMock { get; private set; }
 
         protected MessageService<Cat> MessageService { get; private set; }
 
-        protected MessageConsumerServiceMock<Cat> MessageConsumerServiceMock { get; private set; }
-
-        protected IMessageBroker<Cat> MessageBroker { get; private set; }
+        protected MessageServiceMock<Cat> MessageConsumerServiceMock { get; private set; }
 
         protected MessageBrokerMock<Cat> MessageBrokerMock { get; private set; }
 
         protected MainViewModel ViewModel { get; private set; }
+
+        protected LoggerFactoryMock LoggerFactoryMock { get; private set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -46,14 +43,12 @@ namespace Starter.Data.Tests
             CatServiceMock = new CatServiceMock();
             MessageBrokerMock = new MessageBrokerMock<Cat>();
             MessageConsumerMock = new MessageConsumerMock<Cat>();
-            MessageConsumerServiceMock = new MessageConsumerServiceMock<Cat>();
-            QueueClientMock = new QueueClientMock();
-
-            var logger = IocWrapper.Instance.GetService<ILogger>();
+            MessageConsumerServiceMock = new MessageServiceMock<Cat>();
+            LoggerFactoryMock = new LoggerFactoryMock();
 
             CatService = new CatService(MessageBrokerMock.Instance, ApiClientMock.Instance);
-            MessageConsumer = new MessageConsumer<Cat>(ApiClientMock.Instance, logger);
-            MessageService = new MessageService<Cat>(MessageBrokerMock.Instance, MessageConsumerMock.Instance, logger);
+            MessageConsumer = new MessageConsumer<Cat>(ApiClientMock.Instance, LoggerFactoryMock.Instance);
+            MessageService = new MessageService<Cat>(MessageBrokerMock.Instance, MessageConsumerMock.Instance, LoggerFactoryMock.Instance);
             ViewModel = new MainViewModel(CatServiceMock.Instance);
         }
     }

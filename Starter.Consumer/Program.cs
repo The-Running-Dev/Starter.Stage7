@@ -10,7 +10,7 @@ namespace Starter.Consumer
     {
         static async Task Main(string[] args)
         {
-            await Setup.BootstrapHost().RunConsoleAsync();
+            await Setup.BootstrapConsumer().RunConsoleAsync();
         }
     }
 }

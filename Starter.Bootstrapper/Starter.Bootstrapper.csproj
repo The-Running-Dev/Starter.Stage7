@@ -10,10 +10,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Starter.Broker.Azure\Starter.Broker.Azure.csproj" />
+    <ProjectReference Include="..\Starter.Configuration\Starter.Configuration.csproj" />
     <ProjectReference Include="..\Starter.Data\Starter.Data.csproj" />
     <ProjectReference Include="..\Starter.Framework\Starter.Framework.csproj" />
     <ProjectReference Include="..\Starter.Repository\Starter.Repository.csproj" />
-    <ProjectReference Include="..\Starter.Settings\Starter.Configuration.csproj" />
   </ItemGroup>
 
   <ItemGroup>

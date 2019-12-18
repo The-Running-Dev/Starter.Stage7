@@ -9,6 +9,7 @@ namespace Starter.Framework.Tests.Extensions
     /// <summary>
     /// Tests for the EnumExtensions class
     /// </summary>
+    [TestFixture]
     public class EnumExtensionsTests: TestsBase
     {
         [Test]

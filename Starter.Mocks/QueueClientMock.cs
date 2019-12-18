@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
 
@@ -28,9 +29,16 @@ namespace Starter.Mocks
             Instance = _mockQueueClient.Object;
         }
 
+        public void VerifyRegister()
+        {
+            Verify(
+                x => x.RegisterMessageHandler(It.IsAny<Func<Message, CancellationToken, Task>>(),
+                    It.IsAny<MessageHandlerOptions>()), 1);
+        }
+
         public void VerifySend()
         {
-            Verify((x) => x.SendAsync(It.IsAny<Message>()), 1);
+            Verify(x => x.SendAsync(It.IsAny<Message>()), 1);
         }
 
         private void Verify(Expression<Action<IQueueClient>> verifyExpression, int times)

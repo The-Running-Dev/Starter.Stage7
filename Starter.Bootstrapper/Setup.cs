@@ -11,7 +11,6 @@ using Starter.Data.Services;
 using Starter.Data.Consumers;
 using Starter.Data.ViewModels;
 using Starter.Data.Repositories;
-using Starter.Framework.Loggers;
 using Starter.Framework.Clients;
 using Starter.Framework.Extensions;
 using Starter.Configuration.Entities;
@@ -25,12 +24,18 @@ namespace Starter.Bootstrapper
     /// </summary>
     public static class Setup
     {
+        public static ISettings Settings { get; private set; }
+
+        public static IApiSettings ApiSettings { get; private set; }
+
+        public static IConfigurationService ConfigurationService { get; private set; }
+        
         /// <summary>
-        /// 
+        /// Sets up the configuration for the application
         /// </summary>
         /// <param name="services"></param>
         /// <param name="setupType"></param>
-        public static ServiceProvider BootstrapConfig(IServiceCollection services, SetupType setupType = SetupType.Debug)
+        public static void BootstrapConfig(IServiceCollection services, SetupType setupType = SetupType.Debug)
         {
             // Switch the setup type based on the compile time constant
 #if RELEASE
@@ -52,7 +57,11 @@ namespace Starter.Bootstrapper
             services.AddSingleton<ISettings>(x => configService.Get<Settings>("Settings"));
             services.AddSingleton<IApiSettings>(x => configService.Get<ApiSettings>("ApiSettings"));
 
-            return services.BuildServiceProvider();
+            var provider = services.BuildServiceProvider();
+
+            Settings = provider.GetService<ISettings>();
+            ApiSettings = provider.GetService<IApiSettings>();
+            ConfigurationService = provider.GetService<IConfigurationService>();
         }
 
         /// <summary>
@@ -77,30 +86,29 @@ namespace Starter.Bootstrapper
         }
 
         /// <summary>
-        /// Creates a new host builder for running from the console
+        /// Sets up the MessageService to run from the console
         /// </summary>
         /// <returns></returns>
-        public static IHostBuilder BootstrapHost()
+        public static IHostBuilder BootstrapConsumer()
         {
             var configServices = new ServiceCollection();
 
-            var provider = BootstrapConfig(configServices);
-            var settings = provider.GetService<ISettings>();
-            var configurationService = provider.GetService<IConfigurationService>();
+            BootstrapConfig(configServices);
 
             return new HostBuilder()
                 .ConfigureLogging(logging =>
                 {
-                    logging.AddConfiguration(configurationService.GetSection("Logging"));
+                    logging.AddConfiguration(ConfigurationService.GetSection("Logging"));
                     logging.AddConsole();
                     logging.AddDebug();
-                    logging.AddApplicationInsights(settings.ApplicationInsightsInstrumentationKey);
+                    logging.AddApplicationInsights(Settings.ApplicationInsightsInstrumentationKey);
                 })
                 .ConfigureServices((services) =>
                 {
                     // Provide the existing instances of the settings and the configuration service
-                    services.AddSingleton<ISettings>((x) => settings);
-                    services.AddSingleton<IConfigurationService>((x) => configurationService);
+                    services.AddSingleton<ISettings>((x) => Settings);
+                    services.AddSingleton<IApiSettings>((x) => ApiSettings);
+                    services.AddSingleton<IConfigurationService>((x) => ConfigurationService);
 
                     // Register the rest of the services
                     RegisterServices(services);
@@ -114,22 +122,22 @@ namespace Starter.Bootstrapper
         /// <param name="services"></param>
         private static void RegisterServices(IServiceCollection services)
         {
-            //var settings = services.GetService<ISettings>();
-
             services.AddTransient<IRestClient, RestClient>();
             services.AddTransient<IApiClient, ApiClient>();
-            services.AddTransient<ILogger, ApplicationInsightsLogger>();
 
-            services.AddTransient<ICatRepository, CatRepository>();
+            services.AddTransient<ILoggerFactory, LoggerFactory>();
+
+            // Message broker, consumer and service
             services.AddTransient<IMessageBroker<Cat>, AzureMessageBroker<Cat>>();
             services.AddTransient<IMessageConsumer<Cat>, MessageConsumer<Cat>>();
             services.AddTransient<IMessageService<Cat>, MessageService<Cat>>();
 
+            services.AddTransient<ICatRepository, CatRepository>();
             services.AddTransient<ICatService, CatService>();
+
             services.AddTransient<IMainViewModel, MainViewModel>();
 
-            //services.AddTransient<IQueueClient>(x => new QueueClient(settings.ServiceBusConnection, settings.ServiceBusQueue));
-            services.AddTransient<IQueueClient, QueueClient>();
+            services.AddTransient<IQueueClient>(x => new QueueClient(Settings.ServiceBusConnection, Settings.ServiceBusQueue));
 
             services.AddHostedService<MessageService<Cat>>();
 

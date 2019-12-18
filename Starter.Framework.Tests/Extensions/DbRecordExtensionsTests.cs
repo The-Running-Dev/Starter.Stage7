@@ -12,6 +12,7 @@ namespace Starter.Framework.Tests.Extensions
     /// <summary>
     /// Tests for the DataRecordExtensions class
     /// </summary>
+    [TestFixture]
     public class DataRecordExtensionsTests: TestsBase
     {
         [Test]

@@ -13,6 +13,7 @@ namespace Starter.Framework.Tests.Extensions
     /// <summary>
     /// Tests for the ObjectExtensions class
     /// </summary>
+    [TestFixture]
     public class ObjectExtensionsTests
     {
         [Test]

@@ -49,8 +49,8 @@ namespace Starter.Data.Tests.Consumers
         [Test]
         public void Consume_UnknownMessage_Fails()
         {
-            var logger = IocWrapper.Instance.GetService<ILogger>();
-            var consumer = new MessageConsumer<Cat>(ApiClientMock.Instance, logger);
+            var loggerFactory = IocWrapper.Instance.GetService<ILoggerFactory>();
+            var consumer = new MessageConsumer<Cat>(ApiClientMock.Instance, loggerFactory);
 
             var cat = TestData.Cats.FirstOrDefault();
             var message = new Message<Cat>(MessageCommand.Unknown, cat);

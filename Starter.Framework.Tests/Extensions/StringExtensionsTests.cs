@@ -8,6 +8,7 @@ namespace Starter.Framework.Tests.Extensions
     /// <summary>
     /// Tests for the StringExtensions class
     /// </summary>
+    [TestFixture]
     public class StringExtensionsTests
     {
         [Test]

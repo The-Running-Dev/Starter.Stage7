@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 namespace Starter.Configuration.Services
 {
     /// <summary>
-    /// Implements configuration service
+    /// Implements the Configuration service
     /// </summary>
     public class ConfigurationService: IConfigurationService
     {

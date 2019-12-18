@@ -11,7 +11,7 @@ namespace Starter.Configuration.Services
 
         /// <summary>
         /// Gets a typed instance of the settings
-        /// specified in the sectionName
+        /// specified in the section name
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="sectionName"></param>

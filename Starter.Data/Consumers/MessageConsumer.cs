@@ -16,10 +16,10 @@ namespace Starter.Data.Consumers
 
         private readonly ILogger _logger;
 
-        public MessageConsumer(IApiClient apiClient, ILogger logger)
+        public MessageConsumer(IApiClient apiClient, ILoggerFactory loggerFactory)
         {
             _apiClient = apiClient;
-            _logger = logger;
+            _logger = loggerFactory.CreateLogger(GetType().AssemblyQualifiedName);
         }
 
         /// <summary>

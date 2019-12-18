@@ -22,8 +22,18 @@ namespace Starter.Broker.Azure
 
         public AzureMessageBroker(ISettings settings, IQueueClient queueClient)
         {
-            //_queueClient = new QueueClient(settings.ServiceBusConnection, settings.ServiceBusQueue);
             _queueClient = queueClient;
+        }
+
+        public void Register()
+        {
+            var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
+            {
+                MaxConcurrentCalls = 1,
+                AutoComplete = false
+            };
+
+            _queueClient.RegisterMessageHandler(MessageHandler, messageHandlerOptions);
         }
 
         public async Task Send(Message<T> entity)
@@ -40,17 +50,6 @@ namespace Starter.Broker.Azure
                 
                 throw;
             }
-        }
-
-        public void Register()
-        {
-            var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
-            {
-                MaxConcurrentCalls = 1,
-                AutoComplete = false
-            };
-
-            _queueClient.RegisterMessageHandler(MessageHandler, messageHandlerOptions);
         }
 
         private async Task MessageHandler(Message rawMessage, CancellationToken token)

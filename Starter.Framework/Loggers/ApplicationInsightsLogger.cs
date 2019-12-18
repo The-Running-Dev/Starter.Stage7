@@ -14,7 +14,7 @@ namespace Starter.Framework.Loggers
     /// <summary>
     /// Implements the ILogger interface with Application Insights
     /// </summary>
-    public class ApplicationInsightsLogger : ILogger, IDisposable
+    public class ApplicationInsightsLogger<T> : ILogger<T>, IDisposable
     {
         private readonly TelemetryClient _telemetryClient;
 

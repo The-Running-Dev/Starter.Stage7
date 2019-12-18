@@ -13,6 +13,7 @@ namespace Starter.Repository.Tests.Repositories
     /// <summary>
     /// Tests for the CatRepository class
     /// </summary>
+    [TestFixture]
     public class CatRepositoryTests : TestsBase
     {
         [Test]

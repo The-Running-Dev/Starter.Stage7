@@ -9,16 +9,16 @@ using Starter.Data.Services;
 namespace Starter.Mocks
 {
     /// <summary>
-    /// Creates and manages setup for a mocked Message consumer
+    /// Creates and manages setup for a mocked Message service
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class MessageConsumerServiceMock<T>
+    public class MessageServiceMock<T>
     {
         private readonly Mock<IMessageService<T>> _service;
 
         public IMessageService<T> Instance { get; }
 
-        public MessageConsumerServiceMock()
+        public MessageServiceMock()
         {
             _service = new Mock<IMessageService<T>>();
 
