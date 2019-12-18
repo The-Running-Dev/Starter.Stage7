@@ -93,3 +93,8 @@ Please add "C:\Users\boyank\.azure-kubectl" to your search PATH so the `kubectl.
     2. Update system PATH environment variable by following "Control Panel->System->Advanced->Environment Variables", and re-open the command window. You only need to do it once
 
 CHRISTMAS
+
+Abstractions be Damned!
+- MessageBroker is what sends and receives messages
+- MessageConsumer is solely responsible for consuming the messages
+- MessageService takes messages from the broker and feeds them to the consumer
