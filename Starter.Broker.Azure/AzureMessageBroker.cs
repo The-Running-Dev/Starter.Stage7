@@ -16,13 +16,14 @@ namespace Starter.Broker.Azure
     /// </summary>
     public class AzureMessageBroker<T> : IMessageBroker<T>
     {
-        public event EventHandler<Message<T>> DataReceived;
-
         private readonly IQueueClient _queueClient;
 
-        public AzureMessageBroker(ISettings settings)
+        public event EventHandler<Message<T>> DataReceived;
+
+        public AzureMessageBroker(ISettings settings, IQueueClient queueClient)
         {
-            _queueClient = new QueueClient(settings.ServiceBusConnection, settings.ServiceBusQueue);
+            //_queueClient = new QueueClient(settings.ServiceBusConnection, settings.ServiceBusQueue);
+            _queueClient = queueClient;
         }
 
         public async Task Send(Message<T> entity)
@@ -41,7 +42,7 @@ namespace Starter.Broker.Azure
             }
         }
 
-        public void Receive()
+        public void Register()
         {
             var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
             {
@@ -49,19 +50,16 @@ namespace Starter.Broker.Azure
                 AutoComplete = false
             };
 
-            _queueClient.RegisterMessageHandler(async (Message rawMessage, CancellationToken token) =>
-            {
-                var message = rawMessage.Body.FromJsonBytes<Message<T>>();
-
-                DataReceived?.Invoke(this, message);
-
-                await _queueClient.CompleteAsync(rawMessage.SystemProperties.LockToken);
-            }, messageHandlerOptions);
+            _queueClient.RegisterMessageHandler(MessageHandler, messageHandlerOptions);
         }
 
-        public void Dispose()
+        private async Task MessageHandler(Message rawMessage, CancellationToken token)
         {
-            _queueClient.CloseAsync();
+            var message = rawMessage.Body.FromJsonBytes<Message<T>>();
+
+            DataReceived?.Invoke(this, message);
+
+            await _queueClient.CompleteAsync(rawMessage.SystemProperties.LockToken);
         }
 
         private Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)

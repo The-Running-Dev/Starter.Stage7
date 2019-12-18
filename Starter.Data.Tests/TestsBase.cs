@@ -1,92 +1,60 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+﻿using NUnit.Framework;
+using Microsoft.Extensions.Logging;
 
-using Moq;
-using NUnit.Framework;
-
+using Starter.Mocks;
 using Starter.Bootstrapper;
 using Starter.Data.Entities;
 using Starter.Data.Services;
+using Starter.Data.Consumers;
 using Starter.Data.ViewModels;
-using Starter.Framework.Clients;
 
 namespace Starter.Data.Tests
 {
     /// <summary>
-    /// Base class for the Starter.Data.Tests project
+    /// Implements tests setup
     /// </summary>
     public class TestsBase
     {
-        protected List<Cat> Cats { get; set; }
+        protected ApiClientMock ApiClientMock { get; set; }
 
-        protected MainViewModel ViewModel { get; set; }
+        protected ICatService CatService { get; private set; }
 
-        protected IApiClient ApiClient { get; set; }
+        protected CatServiceMock CatServiceMock { get; private set; }
 
-        protected IMessageBroker<Cat> MessageBroker { get; set; }
+        protected QueueClientMock QueueClientMock { get; private set; }
 
-        protected ICatService CatService { get; set; }
+        protected IMessageConsumer<Cat> MessageConsumer { get; private set; }
+
+        protected MessageConsumerMock<Cat> MessageConsumerMock { get; private set; }
+
+        protected MessageService<Cat> MessageService { get; private set; }
+
+        protected MessageConsumerServiceMock<Cat> MessageConsumerServiceMock { get; private set; }
+
+        protected IMessageBroker<Cat> MessageBroker { get; private set; }
+
+        protected MessageBrokerMock<Cat> MessageBrokerMock { get; private set; }
+
+        protected MainViewModel ViewModel { get; private set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             Setup.Bootstrap(SetupType.Test);
 
-            CreateCatTestData();
+            ApiClientMock = new ApiClientMock();
+            CatServiceMock = new CatServiceMock();
+            MessageBrokerMock = new MessageBrokerMock<Cat>();
+            MessageConsumerMock = new MessageConsumerMock<Cat>();
+            MessageConsumerServiceMock = new MessageConsumerServiceMock<Cat>();
+            QueueClientMock = new QueueClientMock();
 
-            var mockApiClient = new Mock<IApiClient>();
-            var mockServiceBus = new Mock<IMessageBroker<Cat>>();
-            var mockCatService = new Mock<ICatService>();
+            var logger = IocWrapper.Instance.GetService<ILogger>();
 
-            // Setup the cat service
-            mockCatService.Setup(x => x.GetAll()).Returns(Task.FromResult(Cats.AsEnumerable()));
-
-            mockCatService.Setup(x => x.GetById(It.IsAny<Guid>()))
-                .Returns((Guid id) => { return Task.FromResult(Cats.FirstOrDefault(x => x.Id == id)); });
-
-            mockCatService.Setup(x => x.Create(It.IsAny<Cat>()))
-                .Returns((Cat entity) =>
-                {
-                    Cats.Add(entity);
-
-                    return Task.CompletedTask;
-                });
-
-            mockCatService.Setup(x => x.Update(It.IsAny<Cat>()))
-                .Returns((Cat entity) =>
-                {
-                    var existing = Cats.Find(x => x.Id == entity.Id);
-
-                    Cats.Remove(existing);
-                    Cats.Add(entity);
-
-                    return Task.CompletedTask;
-                });
-
-            mockCatService.Setup(x => x.Delete(It.IsAny<Guid>()))
-                .Returns((Guid id) =>
-                {
-                    Cats.Remove(Cats.FirstOrDefault(x => x.Id == id));
-                    return Task.CompletedTask;
-                });
-
-            ApiClient = mockApiClient.Object;
-            MessageBroker = mockServiceBus.Object;
-            CatService = mockCatService.Object;
-
-            ViewModel = new MainViewModel(CatService);
-        }
-
-        protected void CreateCatTestData()
-        {
-            Cats = new List<Cat>
-            {
-                new Cat("Widget", Ability.Eating),
-                new Cat("Garfield",Ability.Engineering),
-                new Cat("Mr. Boots", Ability.Lounging)
-            };
+            CatService = new CatService(MessageBrokerMock.Instance, ApiClientMock.Instance);
+            MessageConsumer = new MessageConsumer<Cat>(ApiClientMock.Instance, logger);
+            MessageService = new MessageService<Cat>(MessageBrokerMock.Instance, MessageConsumerMock.Instance, logger);
+            ViewModel = new MainViewModel(CatServiceMock.Instance);
         }
     }
 }

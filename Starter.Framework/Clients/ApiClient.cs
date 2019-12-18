@@ -36,7 +36,8 @@ namespace Starter.Framework.Clients
 
         public async Task<T> GetById<T>(Guid id)
         {
-            var request = new RestRequest($"{_settings.Resource}/{id}", Method.GET);
+            var request = new RestRequest(_settings.Resource, Method.GET);
+            request.AddParameter("id", id, ParameterType.UrlSegment);
 
             var cancellationTokenSource = new CancellationTokenSource();
 

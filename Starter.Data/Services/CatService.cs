@@ -10,11 +10,11 @@ namespace Starter.Data.Services
     /// <summary>
     /// Implements the Cat related business logic
     /// </summary>
-    public class CatService : ICatService, IDisposable
+    public class CatService : ICatService
     {
         private readonly IApiClient _apiClient;
 
-        private IMessageBroker<Cat> _broker;
+        private readonly IMessageBroker<Cat> _broker;
 
         public CatService(IMessageBroker<Cat> broker, IApiClient apiClient)
         {
@@ -51,12 +51,6 @@ namespace Starter.Data.Services
             var message = new Message<Cat>(MessageCommand.Delete, new Cat { Id = id });
 
             await _broker.Send(message);
-        }
-
-        public void Dispose()
-        {
-            _broker.Dispose();
-            _broker = null;
         }
     }
 }

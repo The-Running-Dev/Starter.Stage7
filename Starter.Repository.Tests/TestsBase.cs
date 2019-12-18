@@ -1,23 +1,19 @@
-﻿using System.Collections.Generic;
-
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Microsoft.Azure.Cosmos.Table;
 
+using Starter.Mocks;
 using Starter.Bootstrapper;
-using Starter.Data.Entities;
 using Starter.Data.Repositories;
 using Starter.Configuration.Entities;
 
 namespace Starter.Repository.Tests
 {
     /// <summary>
-    /// Base class for the Starter.Repository.Tests project
+    /// Implements tests setup
     /// </summary>
     public class TestsBase
     {
         protected ICatRepository CatRepository { get; set; }
-
-        protected List<Cat> Cats { get; set; }
 
         protected CloudStorageAccount StorageAccount { get; set; }
 
@@ -36,22 +32,7 @@ namespace Starter.Repository.Tests
             var tableClient = StorageAccount.CreateCloudTableClient(new TableClientConfiguration());
             CatsTable = tableClient.GetTableReference(settings.CatEntityTableName);
 
-            CreateTestData();
-        }
-
-        /// <summary>
-        /// Creates tests data
-        /// </summary>
-        protected void CreateTestData()
-        {
-            Cats = new List<Cat>
-            {
-                new Cat("Widget", Ability.Eating),
-                new Cat("Garfield", Ability.Engineering),
-                new Cat("Mr. Boots", Ability.Lounging)
-            };
-
-            foreach (var cat in Cats)
+            foreach (var cat in TestData.Cats)
             {
                 CatsTable.Execute(TableOperation.Insert(cat));
             }

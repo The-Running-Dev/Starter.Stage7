@@ -1,7 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Azure.ServiceBus;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+
 using RestSharp;
+
 using Starter.Broker.Azure;
 using Starter.Data.Entities;
 using Starter.Data.Services;
@@ -111,6 +114,8 @@ namespace Starter.Bootstrapper
         /// <param name="services"></param>
         private static void RegisterServices(IServiceCollection services)
         {
+            //var settings = services.GetService<ISettings>();
+
             services.AddTransient<IRestClient, RestClient>();
             services.AddTransient<IApiClient, ApiClient>();
             services.AddTransient<ILogger, ApplicationInsightsLogger>();
@@ -118,12 +123,15 @@ namespace Starter.Bootstrapper
             services.AddTransient<ICatRepository, CatRepository>();
             services.AddTransient<IMessageBroker<Cat>, AzureMessageBroker<Cat>>();
             services.AddTransient<IMessageConsumer<Cat>, MessageConsumer<Cat>>();
-            services.AddTransient<IMessageConsumerService, MessageConsumerService>();
+            services.AddTransient<IMessageService<Cat>, MessageService<Cat>>();
 
             services.AddTransient<ICatService, CatService>();
             services.AddTransient<IMainViewModel, MainViewModel>();
 
-            services.AddHostedService<MessageConsumerService>();
+            //services.AddTransient<IQueueClient>(x => new QueueClient(settings.ServiceBusConnection, settings.ServiceBusQueue));
+            services.AddTransient<IQueueClient, QueueClient>();
+
+            services.AddHostedService<MessageService<Cat>>();
 
             IocWrapper.Instance = new IocWrapper(services.BuildServiceProvider());
         }

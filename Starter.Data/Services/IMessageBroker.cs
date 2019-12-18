@@ -8,12 +8,23 @@ namespace Starter.Data.Services
     /// <summary>
     /// Defines the contract for the message broker
     /// </summary>
-    public interface IMessageBroker<T>: IDisposable
+    public interface IMessageBroker<T>
     {
+        /// <summary>
+        /// Handles any received messages
+        /// </summary>
         event EventHandler<Message<T>> DataReceived;
 
-        Task Send(Message<T> entity);
+        /// <summary>
+        /// Sends a message to the queue
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        Task Send(Message<T> message);
 
-        void Receive();
+        /// <summary>
+        /// Registers the broker to start receiving messages
+        /// </summary>
+        void Register();
     }
 }

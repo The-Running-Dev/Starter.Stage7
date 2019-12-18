@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using FluentAssertions;
 
+using Starter.Mocks;
 using Starter.Data.Entities;
 using Starter.Data.ViewModels;
 
@@ -16,9 +17,9 @@ namespace Starter.Data.Tests.ViewModels
     public class MainViewModelTests : TestsBase
     {
         [Test]
-        public void New_MainViewModel_Successful()
+        public void New_MainViewModelInstance_Successful()
         {
-            var viewModel = new MainViewModel(CatService);
+            var viewModel = new MainViewModel(new CatServiceMock().Instance);
 
             viewModel.Abilities.Should().NotBeNull();
             viewModel.IsCreating.Value.Should().BeFalse();
@@ -31,14 +32,14 @@ namespace Starter.Data.Tests.ViewModels
         {
             await ViewModel.GetAll();
 
-            ViewModel.Cats.Count().Should().Be(Cats.Count);
+            ViewModel.Cats.Count().Should().Be(TestData.Cats.Count);
             ViewModel.IsLoading.Value.Should().BeFalse();
         }
 
         [Test]
         public async Task GetById_ForCatId_Successful()
         {
-            var lastCat = Cats.LastOrDefault();
+            var lastCat = TestData.Cats.LastOrDefault();
             await ViewModel.GetById(lastCat.Id);
 
             ViewModel.DetailedCat.Should().Be(lastCat);
@@ -65,13 +66,13 @@ namespace Starter.Data.Tests.ViewModels
             ViewModel.DetailedCat = cat;
             ViewModel.Save();
 
-            Cats.FirstOrDefault(x => x.Id == cat.Id).Should().BeEquivalentTo(cat);
+            TestData.Cats.FirstOrDefault(x => x.Id == cat.Id).Should().BeEquivalentTo(cat);
         }
 
         [Test]
         public void Save_ExistingCat_Successful()
         {
-            var cat = Cats.FirstOrDefault();
+            var cat = TestData.Cats.FirstOrDefault();
             var newName = Guid.NewGuid().ToString();
 
             cat.Name = newName;
@@ -79,18 +80,18 @@ namespace Starter.Data.Tests.ViewModels
             ViewModel.SelectedCat.Value = cat;
             ViewModel.Save();
 
-            Cats.FirstOrDefault(x => x.Name == newName).Should().NotBeNull();
+            TestData.Cats.FirstOrDefault(x => x.Name == newName).Should().NotBeNull();
         }
 
         [Test]
         public void Delete_Cat_Successful()
         {
-            var cat = Cats.FirstOrDefault();;
+            var cat = TestData.Cats.FirstOrDefault();;
             
             ViewModel.DetailedCat = cat;
             ViewModel.Delete();
 
-            Cats.FirstOrDefault(x => x.Id == cat.Id).Should().BeNull();
+            TestData.Cats.FirstOrDefault(x => x.Id == cat.Id).Should().BeNull();
         }
     }
 }

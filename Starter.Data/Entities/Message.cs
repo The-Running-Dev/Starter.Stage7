@@ -1,7 +1,7 @@
 ﻿namespace Starter.Data.Entities
 {
     /// <summary>
-    /// 
+    /// Implements the Message entity
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class Message<T>

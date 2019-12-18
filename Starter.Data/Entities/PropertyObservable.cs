@@ -3,12 +3,14 @@
 namespace Starter.Data.Entities
 {
     /// <summary>
-    /// 
+    /// Implements a generic property observable based on INotifyPropertyChanged
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class PropertyObservable<T> : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private T _value;
 
         public T Value
         {
@@ -30,7 +32,5 @@ namespace Starter.Data.Entities
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        private T _value;
     }
 }

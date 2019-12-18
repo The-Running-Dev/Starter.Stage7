@@ -40,6 +40,8 @@ Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "Starter.Resources.Azure", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.Configuration", "Starter.Settings\Starter.Configuration.csproj", "{3AF551B9-8526-4D10-B95A-D621E77515AE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starter.Mocks", "Starter.Mocks\Starter.Mocks.csproj", "{0362E068-A35F-4539-903C-61641B1D3A00}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -110,6 +112,10 @@ Global
 		{3AF551B9-8526-4D10-B95A-D621E77515AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AF551B9-8526-4D10-B95A-D621E77515AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AF551B9-8526-4D10-B95A-D621E77515AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0362E068-A35F-4539-903C-61641B1D3A00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0362E068-A35F-4539-903C-61641B1D3A00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0362E068-A35F-4539-903C-61641B1D3A00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0362E068-A35F-4539-903C-61641B1D3A00}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

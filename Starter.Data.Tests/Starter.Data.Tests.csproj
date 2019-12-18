@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Starter.Bootstrapper\Starter.Bootstrapper.csproj" />
     <ProjectReference Include="..\Starter.Data\Starter.Data.csproj" />
+    <ProjectReference Include="..\Starter.Mocks\Starter.Mocks.csproj" />
   </ItemGroup>
 
 </Project>

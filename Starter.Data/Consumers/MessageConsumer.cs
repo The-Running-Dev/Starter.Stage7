@@ -12,11 +12,11 @@ namespace Starter.Data.Consumers
     /// </summary>
     public class MessageConsumer<T> : IMessageConsumer<T> where T: IEntity
     {
-        private IApiClient _apiClient;
+        private readonly IApiClient _apiClient;
 
-        private readonly ILogger<IMessageConsumer<T>> _logger;
+        private readonly ILogger _logger;
 
-        public MessageConsumer(IApiClient apiClient, ILogger<IMessageConsumer<T>> logger)
+        public MessageConsumer(IApiClient apiClient, ILogger logger)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -47,11 +47,6 @@ namespace Starter.Data.Consumers
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
-
-        public void Dispose()
-        {
-            _apiClient = null;
         }
     }
 }

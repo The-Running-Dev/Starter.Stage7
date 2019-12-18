@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using FluentAssertions;
 
+using Starter.Mocks;
 using Starter.Framework.Extensions;
 
 namespace Starter.Framework.Tests.Extensions

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using FluentAssertions;
 
+using Starter.Mocks;
 using Starter.Data.Entities;
 
 namespace Starter.Repository.Tests.Repositories
@@ -27,7 +28,7 @@ namespace Starter.Repository.Tests.Repositories
         [Category("Integration")]
         public async Task CatById_ForId_Successful()
         {
-            var cat = Cats.FirstOrDefault();
+            var cat = TestData.Cats.FirstOrDefault();
             var existingCat = await CatRepository.GetById(cat.Id);
 
             existingCat.Name.Should().Be(cat.Name);
@@ -37,7 +38,7 @@ namespace Starter.Repository.Tests.Repositories
         [Category("Integration")]
         public async Task CatBySecondaryId_ForSecondaryId_Successful()
         {
-            var cat = Cats.FirstOrDefault();
+            var cat = TestData.Cats.FirstOrDefault();
             var existingCat = await CatRepository.GetBySecondaryId(cat.SecondaryId);
 
             existingCat.Name.Should().Be(cat.Name);
@@ -49,7 +50,7 @@ namespace Starter.Repository.Tests.Repositories
         {
             var cat = new Cat(Guid.NewGuid().ToString(), Ability.Napping);
 
-            Cats.Add(cat);
+            TestData.Cats.Add(cat);
             await CatRepository.Create(cat);
 
             var existingCat = await CatRepository.GetById(cat.Id);
@@ -61,7 +62,7 @@ namespace Starter.Repository.Tests.Repositories
         [Category("Integration")]
         public async Task Update_Cat_Successful()
         {
-            var cat = Cats.FirstOrDefault();
+            var cat = TestData.Cats.FirstOrDefault();
             cat.Name = Guid.NewGuid().ToString();
 
             await CatRepository.Update(cat);
@@ -75,11 +76,11 @@ namespace Starter.Repository.Tests.Repositories
         [Category("Integration")]
         public async Task Delete_Cat_Successful()
         {
-            var cat = Cats.FirstOrDefault();
+            var cat = TestData.Cats.FirstOrDefault();
             cat.Name = Guid.NewGuid().ToString();
 
             await CatRepository.Delete(cat.Id);
-            Cats.Remove(cat);
+            TestData.Cats.Remove(cat);
 
             var existingCat = await CatRepository.GetById(cat.Id);
 
@@ -99,7 +100,7 @@ namespace Starter.Repository.Tests.Repositories
         [Category("Integration")]
         public async Task GetAll_SpecificCatExists_Successful()
         {
-            var cat = Cats.FirstOrDefault();
+            var cat = TestData.Cats.FirstOrDefault();
             var cats = await CatRepository.GetAll();
 
             cats.FirstOrDefault(x => x.Name == cat.Name).Should().NotBeNull();
