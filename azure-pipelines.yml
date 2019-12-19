@@ -130,14 +130,14 @@ stages:
           - task: CopyFiles@2
             displayName: "Copying Manifests to Artifacts..."
             inputs:
-            contents: "$(manifestsDirectory)/**"
-            targetFolder: "$(artifactsDirectory)/manifests"
+              contents: "$(manifestsDirectory)/**"
+              targetFolder: "$(artifactsDirectory)/manifests"
 
           - task: CopyFiles@2
             displayName: "Copying Templates to Artifacts..."
             inputs:
-            contents: "$(armTemplates)"
-            targetFolder: "$(artifactsDirectory)/templates"
+              contents: "$(armTemplates)"
+              targetFolder: "$(artifactsDirectory)/templates"
 
           - task: PublishPipelineArtifact@1
             displayName: "Publishing Artifacts..."
