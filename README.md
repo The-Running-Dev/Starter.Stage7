@@ -71,20 +71,21 @@ The application is setup to deploy through an ```Azure Pipeline``` every time th
 ## Running the Project
 
 ### Requirements
-- .NET Core 2.2
+- .NET Core 2.2. On Windows (with Chocolatey) ```choco install dotnetcore-sdk```
 - PowerShell
-- Azure CLI
-- Azure PowerShell Module
-- Azure Storage Emulator
-- Docker Desktop
+- Azure CLI. On Windows (with Chocolatey) ```choco install azure-cli```
+- Azure PowerShell Module. On Windows (with Chocolatey) ```choco install az.powershell```
+- Azure Storage Emulator. On Windows (with Chocolatey) ```choco install azurestorageemulator```
+- Kubernetes CLI. On Windows (with Chocolatey) ```choco install kubernetes-cli```
+- Docker Desktop. On Windows (with Chocolatey) ```choco install docker-desktop```
 
 ### Build and Run
 - Start Docker Desktop
-- Build in PowerShell
+- In PowerShell, build
 ```
 .\Starter.Build\build.ps1
 ```
-- Run the API and the Consumer in Docker
+- In PowerShell, run the API and the Consumer in Docker
 ```
 .\Starter.Build\run.ps1
 ```
@@ -93,7 +94,7 @@ The application is setup to deploy through an ```Azure Pipeline``` every time th
 ## Tests
 
 ### Running All Tests
-- Start Microsoft Azure Storage Emulator
+- Start Azure Storage Emulator
 ```
 dotnet test
 ```

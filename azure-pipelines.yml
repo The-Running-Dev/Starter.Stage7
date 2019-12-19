@@ -40,7 +40,7 @@ variables:
 
 stages:
   - stage: Build
-    displayName: Build Stage
+    displayName: Building Application
     jobs:
       - job: Build
         displayName: Build
@@ -146,13 +146,13 @@ stages:
               targetPath: "$(artifactsDirectory)"
 
   - stage: Deploy
-    displayName: Deploy Stage
+    displayName: "Deploying Applications"
     dependsOn: Build
 
     jobs:
       - deployment: Deploy
         condition: succeeded()
-        displayName: Deploy
+        displayName: "Deploying to $(kubernetesEnvironment)"
         environment: "$(kubernetesEnvironment)"
         strategy:
           runOnce:
