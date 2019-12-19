@@ -21,6 +21,18 @@ variables:
   containerRegistry: "astracontainerregistry.azurecr.io"
   containerRegistryServiceConnection: "astra_container_registry"
 
+  resourceManagerConnection: "Azure_Dev_Subscription"
+  subscriptionId: "e1c5afc5-9085-48e6-b242-e93aeac67b3a"
+  resourceGroupName: "boyankostadinov-newstartertask"
+  location: "West Europe"
+
+  appServiceTemplate: "app-service"
+  serviceBusTemplate: "service-bus"
+  storageAccountTemplate: "storage-account"
+
+  artifactsDirectory: "$(Build.Repository.LocalPath)/Artifacts"
+  armTemplates: "$(Build.Repository.LocalPath)/Starter.Resources.Azure/*.json"
+
   manifestsDirectory: "$(Build.Repository.LocalPath)/Manifests"
   kubernetesManifest: "kubernetes-cluster.yml"
   kubernetesServiceConnection: "dev-atra-boyankostadinov-kubernetes"
@@ -115,11 +127,23 @@ stages:
                 $(Build.BuildId)
                 latest
 
-          - task: PublishPipelineArtifact@0
-            displayName: "Publishing Manifests..."
+          - task: CopyFiles@2
+            displayName: "Copying Manifests to Artifacts..."
             inputs:
-              artifactName: "manifests"
-              targetPath: "$(manifestsDirectory)"
+              contents: "$(manifestsDirectory)/**"
+              targetFolder: "$(artifactsDirectory)/manifests"
+
+          - task: CopyFiles@2
+            displayName: "Copying Templates to Artifacts..."
+            inputs:
+              contents: "$(armTemplates)"
+              targetFolder: "$(artifactsDirectory)/templates"
+
+          - task: PublishPipelineArtifact@1
+            displayName: "Publishing Artifacts..."
+            inputs:
+              artifactName: "artifacts"
+              targetPath: "$(artifactsDirectory)"
 
   - stage: Deploy
     displayName: Deploy Stage
@@ -138,8 +162,50 @@ stages:
                   displayName: "Downloading Artifacts..."
                   inputs:
                     buildType: "current"
-                    artifactName: "manifests"
-                    targetPath: "$(System.ArtifactsDirectory)/manifests"
+                    artifactName: "artifacts"
+                    targetPath: "$(System.ArtifactsDirectory)"
+
+                - task: AzureResourceManagerTemplateDeployment@3
+                  displayName: "Deploying App Service Resources..."
+                  inputs:
+                    deploymentScope: "Resource Group"
+                    azureResourceManagerConnection: "$(resourceManagerConnection)"
+                    subscriptionId: "$(subscriptionId)"
+                    action: 'Create Or Update Resource Group'
+                    resourceGroupName: "$(resourceGroupName)"
+                    location: "$(location)"
+                    templateLocation: 'Linked artifact'
+                    csmFile: "$(System.ArtifactsDirectory)/templates/$(appServiceTemplate).json"
+                    csmParametersFile: "$(System.ArtifactsDirectory)/templates/$(appServiceTemplate).parameters.json"
+                    deploymentMode: "Incremental"
+
+                - task: AzureResourceManagerTemplateDeployment@3
+                  displayName: "Deploying Service Bus Resources..."
+                  inputs:
+                    deploymentScope: "Resource Group"
+                    azureResourceManagerConnection: "$(resourceManagerConnection)"
+                    subscriptionId: "$(subscriptionId)"
+                    action: 'Create Or Update Resource Group'
+                    resourceGroupName: "$(resourceGroupName)"
+                    location: "$(location)"
+                    templateLocation: 'Linked artifact'
+                    csmFile: "$(System.ArtifactsDirectory)/templates/$(serviceBusTemplate).json"
+                    csmParametersFile: '$(System.ArtifactsDirectory)/templates/$(serviceBusTemplate).parameters.json'
+                    deploymentMode: "Incremental"
+
+                - task: AzureResourceManagerTemplateDeployment@3
+                  displayName: "Deploying Storage Account Resources..."
+                  inputs:
+                    deploymentScope: "Resource Group"
+                    azureResourceManagerConnection: "$(resourceManagerConnection)"
+                    subscriptionId: "$(subscriptionId)"
+                    action: 'Create Or Update Resource Group'
+                    resourceGroupName: "$(resourceGroupName)"
+                    location: "$(location)"
+                    templateLocation: 'Linked artifact'
+                    csmFile: "$(System.ArtifactsDirectory)/templates/$(storageAccountTemplate).json"
+                    csmParametersFile: '$(System.ArtifactsDirectory)/templates/$(storageAccountTemplate).parameters.json'
+                    deploymentMode: "Incremental"
 
                 - task: Kubernetes@1
                   displayName: "Deploying Cluster..."
