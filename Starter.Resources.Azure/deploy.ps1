@@ -4,8 +4,8 @@
 
 Param(
     [string] [Parameter(Mandatory)] $Location,
+    [string] [Parameter(Mandatory)] $ResourceGroup,
     [string] $Artifacts = (Join-Path $PSScriptRoot 'artifacts'),
-    [string] $ResourceGroup = (Split-Path $Artifacts -Leaf),
     [switch] $UploadArtifacts,
     [string] $StorageAccountName,
     [string] $StorageContainerName = $resourceGroup.ToLowerInvariant() + '-artifacts',
@@ -18,9 +18,11 @@ Param(
 )
 
 <#
-.\deploy.ps1 -location westeurope -templateFile .\app-service.json
-.\deploy.ps1 -location westeurope -templateFile .\service-bus.json
-.\deploy.ps1 -location westeurope -templateFile .\storage-account.json
+.\deploy.ps1 -Location westeurope -ResourceGroup boyankostadinov-newstartertask
+
+.\deploy.ps1 -Location westeurope -ResourceGroup boyankostadinov-newstartertask -templateFile .\app-service.json
+.\deploy.ps1 -Location westeurope -ResourceGroup boyankostadinov-newstartertask -templateFile .\service-bus.json
+.\deploy.ps1 -Location westeurope -ResourceGroup boyankostadinov-newstartertask -templateFile .\storage-account.json
 #>
 
 try {

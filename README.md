@@ -72,10 +72,11 @@ The application is setup to deploy through an ```Azure Pipeline``` every time th
 
 ### Requirements
 - .NET Core 2.2
-- Azure CLI
-- Docker Desktop
-- Microsoft Azure Storage Emulator
 - PowerShell
+- Azure CLI
+- Azure PowerShell Module
+- Azure Storage Emulator
+- Docker Desktop
 
 ### Build and Run
 - Start Docker Desktop
@@ -130,6 +131,17 @@ az aks browse `
 - Delete the Kubernetes Services and Deployments
 ```
 kubectl delete service --all && kubectl delete deployment --all
+```
+
+## Deployment of Azure Resources
+- In PowerShell, connect to Azure
+```
+Connect-AzAccount
+```
+
+- In PowerShell, deploy the Azure ARM templates
+```
+.\Starter.Resources.Azure\deploy.ps1 -Location westeurope -ResourceGroup boyankostadinov-newstartertask
 ```
 
 ### Helpful Commands
