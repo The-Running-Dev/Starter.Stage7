@@ -33,7 +33,7 @@ variables:
   artifactsDirectory: "$(Build.Repository.LocalPath)/Artifacts"
   armTemplates: "$(Build.Repository.LocalPath)/Starter.Resources.Azure/*.json"
 
-  manifestsDirectory: "$(Build.Repository.LocalPath)/Manifests"
+  manifests: "$(Build.Repository.LocalPath)/Manifests/**"
   kubernetesManifest: "kubernetes-cluster.yml"
   kubernetesServiceConnection: "dev-atra-boyankostadinov-kubernetes"
   kubernetesEnvironment: "dev-astra-boyankostadinov-starter-aksnamespace"
@@ -130,7 +130,7 @@ stages:
           - task: CopyFiles@2
             displayName: "Copying Manifests to Artifacts..."
             inputs:
-              contents: "$(manifestsDirectory)/**"
+              contents: "$(manifests)"
               targetFolder: "$(artifactsDirectory)/manifests"
 
           - task: CopyFiles@2
@@ -152,7 +152,7 @@ stages:
     jobs:
       - deployment: Deploy
         condition: succeeded()
-        displayName: "Deploying to $(kubernetesEnvironment)"
+        displayName: "Deploying to Dev"
         environment: "$(kubernetesEnvironment)"
         strategy:
           runOnce:
