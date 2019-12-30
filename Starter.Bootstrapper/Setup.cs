@@ -29,7 +29,7 @@ namespace Starter.Bootstrapper
         public static IApiSettings ApiSettings { get; private set; }
 
         public static IConfigurationService ConfigurationService { get; private set; }
-        
+
         /// <summary>
         /// Sets up the configuration for the application
         /// </summary>

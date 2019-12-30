@@ -21,10 +21,10 @@ namespace Starter.Data.Tests.ViewModels
         {
             var viewModel = new MainViewModel(new CatServiceMock().Instance);
 
-            viewModel.Abilities.Should().NotBeNull();
             viewModel.IsCreating.Value.Should().BeFalse();
-            viewModel.IsLoading.Value.Should().BeFalse();
+            viewModel.IsLoading.Value.Should().BeFalse("IsLoading Should be False");
             viewModel.IsNameFocused.Value.Should().BeFalse();
+            viewModel.Abilities.Should().NotBeNull();
         }
 
         [Test]
@@ -76,7 +76,7 @@ namespace Starter.Data.Tests.ViewModels
             var newName = Guid.NewGuid().ToString();
 
             cat.Name = newName;
-            
+
             ViewModel.SelectedCat.Value = cat;
             ViewModel.Save();
 
@@ -86,8 +86,8 @@ namespace Starter.Data.Tests.ViewModels
         [Test]
         public void Delete_Cat_Successful()
         {
-            var cat = TestData.Cats.FirstOrDefault();;
-            
+            var cat = TestData.Cats.FirstOrDefault(); ;
+
             ViewModel.DetailedCat = cat;
             ViewModel.Delete();
 
